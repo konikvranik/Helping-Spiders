@@ -1,0 +1,32 @@
+CORE_PATH=PATH_TO_PROJECT_DIR/helpingspiders
+
+FLAGS=\
+  -DSSID='"SSID"' \
+  -DWIFI_PASSWORD='"PWD"' \
+  -DNODE_ID='"esp12f"' \
+  -DBLYNK_TOKEN='"TOKEN"' \
+  -DIR_CHILD_ID=3 \
+  -TEMP_CHILD_ID=2 \
+  -DHUM_CHILD_ID=1 \
+  -DDHT_TYPE="htu" \
+  -DRGB_CHILD_ID=11 \
+  -DILIFE_CHILD_ID=11 \
+  -DDEVELOPMENT \
+  -DRED_PIN=15 \
+  -DGREEN_PIN=12 \
+  -DBLUE_PIN=13 \
+  -DDHT_PIN=3 \
+  -DIRRX_PIN=5 \
+  -DIRTX_PIN=5 \
+  -DENABLE_RGB \
+  -DENABLE_BLYNK \
+  -DENABLE_HTU \
+  -DENABLE_IR \
+  -DENABLE_ILIFE \
+  -DENABLE_DHT \
+  -DENABLE_OTA \
+  -DENABLE_STATUS \
+
+
+include ${CORE_PATH}/esp07.mk
+include ${CORE_PATH}/core.mk

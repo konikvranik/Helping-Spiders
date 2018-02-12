@@ -1,8 +1,11 @@
 CORE_PATH=PATH_TO_PROJECT_DIR/helpingspiders
 
 MODULE_IP=192.168.1.1
+BAUDRATE = 115200
+COM_PORT = /dev/ttyS5
+
 FLAGS=\
-  -DSSID='"SSID"' \
+  -DWIFI_SSID='"SSID"' \
   -DWIFI_PASSWORD='"PWD"' \
   -DNODE_ID='"esp12f"' \
   -DBLYNK_TOKEN='"TOKEN"' \

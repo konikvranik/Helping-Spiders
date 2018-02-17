@@ -117,7 +117,7 @@ SYS_INC=${ARDUINO_CDT}/${PLATFORM_PATH}/tools/sdk/include ${ARDUINO_CDT}/${PLATF
 MODULE := build/target/image.bin
 
 FLAGSPREFIX=-D__ets__ -DICACHE_FLASH -U__STRICT_ANSI__ $(foreach d, $(SYS_INC), -I'$(if $(findstring cygwin, $(SYS)),$(shell $(CYGPATH) $d),$d)') -c
-FLAGSSUFFIX=-DF_CPU=80000000L -DLWIP_OPEN_SRC -DARDUINO=10608 -DARDUINO_$(BOARD) -DARDUINO_ARCH_$(PLATFORM) -DARDUINO_BOARD=\"$(BOARD)\" -D$(PLATFORM) ${FLAGS} -DWIFI_SSID=\"${WIFI_SSID}\" -DWIFI_PASSWORD=\"${WIFI_PASSWORD}\" -DNODE_ID=\"${NODE_ID}\" $(addprefix -DENABLE_,${MODULES}) -include $(CORE_PATH)/src/config.h
+FLAGSSUFFIX=-DF_CPU=80000000L -DLWIP_OPEN_SRC -DARDUINO=10608 -DARDUINO_$(BOARD) -DARDUINO_ARCH_$(PLATFORM) -DARDUINO_BOARD=\"$(BOARD)\" -D$(PLATFORM) -DWIFI_SSID=\"$(WIFI_SSID)\" -DWIFI_PASSWORD=\"$(WIFI_PASSWORD)\" -DNODE_ID=\"$(NODE_ID)\" $(addprefix -DENABLE_,$(MODULES)) $(FLAGS) -include $(CORE_PATH)/src/config.h
 ASMFLAGS=$(FLAGSPREFIX) -g -x assembler-with-cpp -MMD -mlongcalls $(FLAGSSUFFIX)
 CFLAGS =$(FLAGSPREFIX) -w -Os -g -Wpointer-arith -Wno-implicit-function-declaration -Wl,-EL -fno-inline-functions -nostdlib -mlongcalls -mtext-section-literals -falign-functions=4 -MMD -std=gnu99 -ffunction-sections -fdata-sections $(FLAGSSUFFIX)
 CXXFLAGS=$(FLAGSPREFIX) -w -Os -g -mlongcalls -mtext-section-literals -fno-exceptions -fno-rtti -falign-functions=4 -std=c++11 -MMD -ffunction-sections -fdata-sections $(FLAGSSUFFIX)

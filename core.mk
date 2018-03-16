@@ -20,7 +20,9 @@ ARDUINO_LIBRARIES = \
 	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \
 	Adafruit_HTU21DF_Library/1.0.1 \
 	Sodaq_SHT2x/1.2.0 \
-        ArduinoJson/5.9.0 \
+	ArduinoJson/5.9.0 \
+	OneWire/2.3.4 \
+	DallasTemperature/3.8.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \

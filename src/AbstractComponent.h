@@ -8,7 +8,6 @@
 #ifndef ABSTRACT_COMPONENT_H_
 #define ABSTRACT_COMPONENT_H_
 
-#include "core.h"
 #include <ArduinoJson.h>
 #include <ArduinoLog.h>
 #include <core/MyMessage.h>

@@ -1,33 +1,6 @@
 #include "core.h"
 
-#include <ESP8266WebServer.h>
-#include <MySensors.h>
-
-#include "AbstractComponent.h"
-
 ESP8266WebServer http_server(80);
-
-#ifdef ENABLE_OTA
-#include "ota/OTAComponent.h"
-#endif
-#ifdef ENABLE_BLYNK
-#include "blynk/BlynkComponent.h"
-#endif
-#ifdef ENABLE_RGB
-#include "rgb/RGBComponent.h"
-#endif
-#ifdef ENABLE_IR
-#include "ir/IRComponent.h"
-#endif
-#ifdef ENABLE_ILIFE
-#include "ir/iLifeComponent.h"
-#endif
-#ifdef ENABLE_DHT
-#include "ht_sensor/DHTComponent.h"
-#endif
-#ifdef ENABLE_HTU
-#include "ht_sensor/HTUComponent.h"
-#endif
 
 AbstractComponent *modules[] = {
 #ifdef ENABLE_OTA
@@ -50,6 +23,9 @@ AbstractComponent *modules[] = {
 #endif
 #ifdef ENABLE_HTU
     new HTUComponent(TEMP_CHILD_ID, HUM_CHILD_ID, HTU_SCL, HTU_SDA),
+#endif
+#ifdef ENABLE_DS18
+    new DS18Component(TEMP_CHILD_ID, DS18_PIN),
 #endif
 };
 

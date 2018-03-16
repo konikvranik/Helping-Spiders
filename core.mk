@@ -146,15 +146,15 @@ size: $(BUILDDIR)/image.elf
 	${ELF_SIZE} -A "$<"
 .PHONY: size
 
-upload: $(MODULE)
+flash: $(MODULE)
 	${ESP_TOOL} -vv -cd ck -cb ${BAUDRATE} -cp ${COM_PORT} -ca 0x00000 -cf "$(MODULE)"
 	rm $(MODULE)
-.PHONY: upload
+.PHONY: flash
 
-netupload: $(MODULE)
+upload: $(MODULE)
 	curl -X POST -F "update=@$(MODULE)" http://$(MODULE_IP)/update
 	rm $(MODULE)
-.PHONY: netupload
+.PHONY: upload
 
 query_library.%:
 	curl http://downloads.arduino.cc/libraries/library_index.json | fgrep '"url"' | fgrep $*

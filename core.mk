@@ -1,5 +1,5 @@
 
-ARDUINO_CDT = ${HOME}/.arduinocdt
+ARDUINO_CDT = ${HOME}/.arduino15
 
 #BAUDRATE = 230400
 PLATFORM_VERSION=2.3.0

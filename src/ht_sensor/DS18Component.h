@@ -13,15 +13,16 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 
-#define DS18_DELAY 2000 // 15*60*1000
+#define DS18_DELAY 10000
 
 class DS18Component : public AbstractComponent,
                       public AbstractTemperatureComponent {
   MyMessage *temp_msg;
   int16_t temp = -273;
   uint32_t delayMS = 2000, lastRun = 0;
+  int16_t pin;
   DallasTemperature sensor;
-  bool conversionInProgress = false;
+  String addr2string(uint8_t *deviceAddr);
 
 public:
   DS18Component(const uint8_t, const int16_t);
@@ -30,7 +31,6 @@ public:
   virtual void loop();
   virtual void receive(const MyMessage &);
   virtual void presentation();
-  virtual float getHumidity();
   virtual float getTemperature();
   virtual void reportStatus(JsonObject &);
   virtual String moduleName();

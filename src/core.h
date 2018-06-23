@@ -21,7 +21,7 @@
 // Also enable this if MY_USE_UDP is used and you want sensor data sent
 // somewhere.
 //#define MY_CONTROLLER_IP_ADDRESS 192, 168, 1, 6
-#define MY_CONTROLLER_URL_ADDRESS "hass.home"
+#define MY_CONTROLLER_URL_ADDRESS "mqtt.home"
 // The MQTT broker port to to open
 #define MY_PORT 1883
 

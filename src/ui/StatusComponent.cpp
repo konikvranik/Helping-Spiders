@@ -56,9 +56,9 @@ void StatusComponent::setup() {
               (WiFi.isConnected() ? "connected" : "not connected") +
               ".\n"
               "------------------------------------\n\n" +
-              String(this->components_count) + "" + " modules: " +
-              this->moduleNames() + "\n"
-                                    "~~~~~~~~~~\n" +
+              String(this->components_count) + "" +
+              " modules: " + this->moduleNames() + "\n"
+                                                   "~~~~~~~~~~\n" +
               this->ModulesStatus() + "\nChip ID:               " +
               String(ESP.getChipId()) + "\n"
                                         "Flash ID:              " +
@@ -101,7 +101,7 @@ void StatusComponent::setup() {
 String StatusComponent::ModulesStatus() {
   String result = "";
   for (int i = 0; i < this->components_count; i++) {
-    StaticJsonBuffer<200> jsonBuffer;
+    StaticJsonBuffer<1000> jsonBuffer;
     JsonObject &jo = jsonBuffer.createObject();
     this->components[i]->reportStatus(jo);
     if (jo.size() > 0) {

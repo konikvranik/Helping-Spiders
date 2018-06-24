@@ -152,7 +152,7 @@ flash: $(MODULE)
 .PHONY: flash
 
 upload: $(MODULE)
-	curl -X POST -F "update=@$(MODULE)" http://$(MODULE_IP)/update
+	curl -X POST --progress-bar -F "update=@$(MODULE)" http://$(MODULE_IP)/update
 	rm $(MODULE)
 .PHONY: upload
 

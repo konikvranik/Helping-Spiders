@@ -10,19 +10,26 @@
 
 #include "../AbstractComponent.h"
 #include "AbstractTemperatureComponent.h"
-#include <OneWire.h>
 #include <DallasTemperature.h>
+#include <OneWire.h>
 
-#define DS18_DELAY 10000
+#define DS18_DELAY 7000
+#define MAX_DEVICES 255
 
 class DS18Component : public AbstractComponent,
                       public AbstractTemperatureComponent {
   MyMessage *temp_msg;
-  int16_t temp = -273;
   uint32_t delayMS = 2000, lastRun = 0;
   int16_t pin;
   DallasTemperature sensor;
-  String addr2string(uint8_t *deviceAddr);
+  String addr2string(DeviceAddress deviceAddr);
+  String scratchpad2string(uint8_t *deviceAddr);
+  bool deviceIsReady();
+  DeviceAddress devices[MAX_DEVICES];
+  float temps[MAX_DEVICES];
+  uint8_t ds18Count = 0;
+  bool request = false;
+  OneWire *_wire;
 
 public:
   DS18Component(const uint8_t, const int16_t);

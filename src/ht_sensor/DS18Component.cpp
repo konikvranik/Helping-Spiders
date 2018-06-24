@@ -7,25 +7,37 @@
 
 #include "DS18Component.h"
 
-String DS18Component::addr2string(uint8_t *deviceAddr) {
+String DS18Component::addr2string(DeviceAddress deviceAddr) {
   String result = "";
   for (uint8_t i = 0; i < 8; i++) {
-    if (i > 0) {
+    if (i > 0)
       result = result + "-";
-      result = result + String(deviceAddr[i]);
-    }
+    char hexString[20];
+    itoa(deviceAddr[i], hexString, 16);
+    result = result + String(hexString);
   }
   return result;
+}
+
+// Continue to check if the IC has responded with a temperature
+bool DS18Component::deviceIsReady() {
+  int delms =
+      this->sensor.millisToWaitForConversion(this->sensor.getResolution());
+  if (this->sensor.getCheckForConversion() &&
+      !this->sensor.isParasitePowerMode()) {
+    return (this->sensor.isConversionComplete() ||
+            (millis() - delms >= this->lastRun));
+  } else {
+    return millis() - delms >= this->lastRun;
+  }
 }
 
 DS18Component::DS18Component(const uint8_t sensor_id, const int16_t pin)
     : AbstractComponent(sensor_id) {
   pinMode(pin, INPUT);
   this->pin = pin;
-  OneWire oneWireDS(pin);
-  this->sensor = DallasTemperature(&oneWireDS);
-  // this->sensor.setWaitForConversion(false);
-  this->sensor.begin();
+  for (int i = 0; i < MAX_DEVICES; i++)
+    this->temps[i] = -127;
 }
 
 DS18Component::~DS18Component() {
@@ -33,64 +45,70 @@ DS18Component::~DS18Component() {
 }
 
 void DS18Component::setup() {
-  //  this->sensor.setResolution(12);
+  pinMode(this->pin, INPUT_PULLUP);
+  this->_wire = new OneWire(this->pin);
+  this->sensor = DallasTemperature();
+  this->sensor.setOneWire(this->_wire);
+  this->sensor.setWaitForConversion(false);
+  this->sensor.begin();
+  for (int i = 0; i < MAX_DEVICES; i++) {
+    DeviceAddress da;
+    if (this->sensor.getAddress(da, i)) {
+      if (this->sensor.validFamily(da)) {
+        memcpy(this->devices[this->ds18Count++], da, sizeof(da));
+      }
+    } else {
+      break;
+    }
+  }
   // Set delay between sensor readings based on sensor details.
   if (delayMS < DS18_DELAY)
     delayMS = DS18_DELAY;
 }
 
 void DS18Component::presentation() {
-  uint8_t cnt = this->sensor.getDeviceCount();
-  temp_msg = new MyMessage[this->sensor.getDS18Count()];
-  uint8_t *deviceAddress;
-  for (uint8_t i = 0, j = 0; i < cnt; i++) {
-    if (this->sensor.getAddress(deviceAddress, i) &&
-        this->sensor.validFamily(deviceAddress)) {
-      temp_msg[j] = MyMessage(sensor_id + j, V_TEMP);
-      present(sensor_id + i, S_TEMP, (String("Temperature addr:") +
-                                      String(atoi((const char *)deviceAddress)))
-                                         .c_str());
-      j++;
-    }
+  this->temp_msg = new MyMessage[this->ds18Count];
+  for (uint8_t i = 0; i < this->ds18Count; i++) {
+    this->temp_msg[i] = MyMessage(this->sensor_id + i, V_TEMP);
+    present(this->sensor_id + i, S_TEMP,
+            (String(addr2string(this->devices[i]))).c_str());
   }
-  present(100, S_HUM, "INIT DONE");
 }
 
 void DS18Component::loop() {
   if (lastRun + delayMS < millis()) {
     // Get temperature event and print its value.
     this->sensor.requestTemperatures();
-    uint8_t *deviceAddress;
-    for (int8_t i = 0, j = 0; i < this->sensor.getDeviceCount(); i++) {
-      if (this->sensor.getAddress(deviceAddress, i) &&
-          this->sensor.validFamily(deviceAddress)) {
-        /*        send(temp_msg[sensor_id +
-           j++].set(this->sensor.getTempC(deviceAddress),
-                                                   2)); */
-      }
+    this->lastRun = millis();
+    this->request = true;
+  }
+  if (this->request && this->deviceIsReady()) {
+    for (int8_t i = 0; i < this->ds18Count; i++) {
+      this->temps[i] = this->sensor.getTempC(this->devices[i]);
+      send(this->temp_msg[i].set(this->temps[i], 2));
     }
-    lastRun = millis();
+    this->request = false;
   }
 }
 
-float DS18Component::getTemperature() { return this->sensor.getDeviceCount(); }
+float DS18Component::getTemperature() {
+
+  this->_wire->reset();
+  this->_wire->write(0x55);
+
+  return this->sensor.getDeviceCount();
+}
 
 void DS18Component::reportStatus(JsonObject &jo) {
   jo["parasite"] = this->sensor.isParasitePowerMode();
   jo["count"] = this->sensor.getDeviceCount();
   jo["DS18count"] = this->sensor.getDS18Count();
   jo["complete"] = this->sensor.isConversionComplete();
-  uint8_t *deviceAddress;
-  for (int8_t i = 0, j = 0; i < this->sensor.getDeviceCount(); i++) {
-    if (this->sensor.getAddress(deviceAddress, i)) {
-      jo[addr2string(deviceAddress)] = "device";
-      if (this->sensor.validFamily(deviceAddress)) {
-        jo[addr2string(deviceAddress)] =
-            String(this->sensor.getTempC(deviceAddress)) + " °C";
-      }
-    } else {
-      jo[String(i)] = addr2string(deviceAddress);
-    }
+  JsonObject &devices = jo.createNestedObject("devices");
+  for (int8_t i = 0; i < this->ds18Count; i++) {
+    JsonObject &dv = devices.createNestedObject(addr2string(this->devices[i]));
+    dv["value"] = this->temps[i];
+    dv["unit"] = "°C";
   }
 }
 

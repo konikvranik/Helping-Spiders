@@ -2,7 +2,7 @@
 
 HOST="x86_64-pc-linux-gnu"
 [ -z "$HOST" ] && HOST="i686-mingw32"
-[ -z "$ARDUINO_CDT" ] && ARDUINO_CDT="${HOME}/.arduinocdt"
+[ -z "$ARDUINO_CDT" ] && ARDUINO_CDT="${HOME}/.arduino15"
 TMP="$ARDUINO_CDT/downloads"
 mkdir -p "$TMP"
 
@@ -62,7 +62,7 @@ download_library() {
 		download_newer "$URL" "$ARCHIVE"
 		mkdir -p $TARGET
 		unpack "$ARCHIVE" "$TARGET"
-		echo "installed library $NAME ($VERSION)" 
+		echo "installed library $NAME ($VERSION)"
 	done
 }
 

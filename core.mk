@@ -1,5 +1,5 @@
 
-ARDUINO_CDT = ${HOME}/.arduinocdt
+ARDUINO_CDT = ${HOME}/.arduino15
 
 #BAUDRATE = 230400
 PLATFORM_VERSION=2.3.0
@@ -20,7 +20,9 @@ ARDUINO_LIBRARIES = \
 	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \
 	Adafruit_HTU21DF_Library/1.0.1 \
 	Sodaq_SHT2x/1.2.0 \
-        ArduinoJson/5.9.0 \
+	ArduinoJson/5.9.0 \
+	OneWire/2.3.4 \
+	DallasTemperature/3.8.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \
@@ -144,15 +146,15 @@ size: $(BUILDDIR)/image.elf
 	${ELF_SIZE} -A "$<"
 .PHONY: size
 
-upload: $(MODULE)
+flash: $(MODULE)
 	${ESP_TOOL} -vv -cd ck -cb ${BAUDRATE} -cp ${COM_PORT} -ca 0x00000 -cf "$(MODULE)"
 	rm $(MODULE)
-.PHONY: upload
+.PHONY: flash
 
-netupload: $(MODULE)
-	curl -X POST -F "update=@$(MODULE)" http://$(MODULE_IP)/update
+upload: $(MODULE)
+	curl -X POST --progress-bar -F "update=@$(MODULE)" http://$(MODULE_IP)/update
 	rm $(MODULE)
-.PHONY: netupload
+.PHONY: upload
 
 query_library.%:
 	curl http://downloads.arduino.cc/libraries/library_index.json | fgrep '"url"' | fgrep $*

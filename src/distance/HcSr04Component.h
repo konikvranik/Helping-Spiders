@@ -23,7 +23,7 @@ class HcSr04Component : public AbstractComponent,
 
 public:
   Ultrasonic sensor;
-  HcSr04Component(const uint8_t, const uint8_t, const int16_t);
+  HcSr04Component(const uint8_t, const int16_t, const int16_t);
   virtual ~HcSr04Component();
   virtual void setup();
   virtual void loop();

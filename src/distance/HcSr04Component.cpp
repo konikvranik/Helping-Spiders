@@ -32,16 +32,16 @@ void HcSr04Component::presentation() {
 
 void HcSr04Component::loop() {
   if (lastRun + delayMS < millis()) {
-    double old_distance = sensor.distance;
+    double old_distance = this->distance;
     this->sensor.measure();
-    this->distance = this->sensor.get_mm();
+    this->distance = this->sensor.get_cm();
     lastRun = millis();
-    if (old_distance != sensor.distance)
-      send(distance_msg.set(sensor.distance, 2));
+    if (old_distance != this->distance)
+      send(distance_msg.set(this->distance, 2));
   }
 }
 
-float HcSr04Component::getDistance() { return sensor.distance; }
+float HcSr04Component::getDistance() { return this->distance; }
 
 void HcSr04Component::reportStatus(JsonObject &jo) {
   JsonObject &id = jo.createNestedObject("ID");

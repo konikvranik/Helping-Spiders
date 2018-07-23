@@ -23,6 +23,7 @@ ARDUINO_LIBRARIES = \
 	ArduinoJson/5.9.0 \
 	OneWire/2.3.4 \
 	DallasTemperature/3.8.0 \
+	Ultrasonic_hc_sr04/0.4.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \

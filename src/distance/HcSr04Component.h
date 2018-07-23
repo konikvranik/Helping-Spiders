@@ -17,7 +17,7 @@
 class HcSr04Component : public AbstractComponent,
                         public AbstractDistanceComponent {
   MyMessage distance_msg;
-  int16_t distance = -273;
+  float distance = 0;
   uint32_t delayMS = 2000, lastRun = 0;
   int16_t trigPin = 0, echoPin = 0;
 

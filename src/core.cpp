@@ -27,6 +27,9 @@ AbstractComponent *modules[] = {
 #ifdef ENABLE_DS18
     new DS18Component(TEMP_CHILD_ID, DS18_PIN),
 #endif
+#ifdef ENABLE_HCSR04
+    new HcSr04Component(DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
+#endif
 };
 
 int module_count = sizeof(modules) > 0 ? sizeof(modules) / sizeof(modules[0])

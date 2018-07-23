@@ -69,5 +69,8 @@
 #ifdef ENABLE_DS18
 #include "ht_sensor/DS18Component.h"
 #endif
+#ifdef ENABLE_HCSR04
+#include "distance/HcSr04Component.h"
+#endif
 
 #endif

@@ -103,8 +103,14 @@ void setupNTP() {
 
 // ======================== SETUP ============================
 void setup() {
-//	Serial.end();
-//	Serial1.end();
+  //	Serial.end();
+  //	Serial1.end();
+  pinMode(0, INPUT_PULLUP);
+  pinMode(2, INPUT_PULLUP);
+  pinMode(15, INPUT);
+  digitalWrite(0, HIGH);
+  digitalWrite(2, HIGH);
+  digitalWrite(15, LOW);
 #ifndef DISABLE_LOGGING
   DEBUG_ESP_PORT.begin(115200);
 #endif

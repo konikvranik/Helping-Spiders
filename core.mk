@@ -5,7 +5,7 @@ ARDUINO_CDT = ${HOME}/.arduino15
 PLATFORM_VERSION=2.3.0
 
 LIBRARIES =	\
-	#${CORE_PATH}/RGBLEDBlender/src \
+	${CORE_PATH}/RGBLEDBlender/src \
 
 ARDUINO_LIBRARIES = \
 	IRremoteESP8266/2.0.3 \
@@ -23,7 +23,6 @@ ARDUINO_LIBRARIES = \
 	ArduinoJson/5.9.0 \
 	OneWire/2.3.4 \
 	DallasTemperature/3.8.0 \
-	RGBLEDBlender/1.1.2 \
 	Ultrasonic_hc_sr04/0.4.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 

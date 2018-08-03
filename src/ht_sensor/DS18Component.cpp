@@ -91,13 +91,7 @@ void DS18Component::loop() {
   }
 }
 
-float DS18Component::getTemperature() {
-
-  this->_wire->reset();
-  this->_wire->write(0x55);
-
-  return this->sensor.getDeviceCount();
-}
+float DS18Component::getTemperature() { return NULL; }
 
 void DS18Component::reportStatus(JsonObject &jo) {
   jo["parasite"] = this->sensor.isParasitePowerMode();

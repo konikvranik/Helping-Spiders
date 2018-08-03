@@ -12,7 +12,6 @@ HcSr04Component::HcSr04Component(const uint8_t sensor_id, const int16_t trigPin,
     : AbstractComponent(sensor_id) {
   this->trigPin = trigPin, this->echoPin = echoPin,
   distance_msg = MyMessage(sensor_id, V_DISTANCE);
-  pinMode(sensor_id, INPUT);
   this->sensor = Ultrasonic(trigPin, echoPin);
 }
 
@@ -21,9 +20,13 @@ HcSr04Component::~HcSr04Component() {
 }
 
 void HcSr04Component::setup() {
+  pinMode(1, FUNCTION_3);
+  pinMode(3, FUNCTION_3);
   // Set delay between sensor readings based on sensor details.
   if (delayMS < HC_SR04_DELAY)
     delayMS = HC_SR04_DELAY;
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
 }
 
 void HcSr04Component::presentation() {

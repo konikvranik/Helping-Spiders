@@ -13,7 +13,7 @@
 #include <DallasTemperature.h>
 #include <OneWire.h>
 
-#define DS18_DELAY 7000
+#define DS18_DELAY 30000
 #define MAX_DEVICES 255
 
 class DS18Component : public AbstractComponent,

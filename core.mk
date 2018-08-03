@@ -128,7 +128,7 @@ LDPATH=$(foreach d,"${ARDUINO_CDT}/${PLATFORM_PATH}/tools/sdk/lib" "${ARDUINO_CD
 LDFLAGS=-w -Os -g -nostdlib -Wl,--no-check-sections -u call_user_start -Wl,-static $(LDPATH) "-Teagle.flash.${FLASH_MEMORY}.ld" -Wl,--gc-sections -Wl,-wrap,system_restart_local -Wl,-wrap,register_chipv6_phy
 
 %.bin: %.elf
-	${ESP_TOOL} -eo "$(if $(findstring cygwin, $(SYS)),$(shell $(CYGPATH) ${ARDUINO_CDT}/${PLATFORM_PATH}/bootloaders/eboot/eboot.elf),${ARDUINO_CDT}/${PLATFORM_PATH}/bootloaders/eboot/eboot.elf)" -bo "$@" -bm qio -bf 40 -bz ${FLASH_SIZE} -bs .text -bp 4096 -ec -eo "$<" -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec
+	${ESP_TOOL} -v -eo "$(if $(findstring cygwin, $(SYS)),$(shell $(CYGPATH) ${ARDUINO_CDT}/${PLATFORM_PATH}/bootloaders/eboot/eboot.elf),${ARDUINO_CDT}/${PLATFORM_PATH}/bootloaders/eboot/eboot.elf)" -bo "$@" -bm qio -bf 40 -bz ${FLASH_SIZE} -bs .text -bp 4096 -ec -eo "$<" -bs .irom0.text -bs .text -bs .data -bs .rodata -bc -ec -cr
 
 %.elf: $(foreach E,$(OBJECTS),$(if $(findstring /cores/esp8266/,$E),,$E)) $(BUILDDIR)/arduino.ar
 	$(CC) $(LDFLAGS) -o "$@" -Wl,--start-group $^ -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++ -Wl,--end-group  "-L."

@@ -45,12 +45,12 @@ DS18Component::~DS18Component() {
 }
 
 void DS18Component::setup() {
-  pinMode(this->pin, INPUT_PULLUP);
+  pinMode(this->pin, INPUT);
   this->_wire = new OneWire(this->pin);
   this->sensor = DallasTemperature();
   this->sensor.setOneWire(this->_wire);
-  this->sensor.setWaitForConversion(false);
   this->sensor.begin();
+  this->sensor.setWaitForConversion(false);
   for (int i = 0; i < MAX_DEVICES; i++) {
     DeviceAddress da;
     if (this->sensor.getAddress(da, i)) {
@@ -76,18 +76,18 @@ void DS18Component::presentation() {
 }
 
 void DS18Component::loop() {
-  if (lastRun + delayMS < millis()) {
-    // Get temperature event and print its value.
-    this->sensor.requestTemperatures();
-    this->lastRun = millis();
-    this->request = true;
-  }
-  if (this->request && this->deviceIsReady()) {
+  if (this->deviceIsReady()) {
     for (int8_t i = 0; i < this->ds18Count; i++) {
       this->temps[i] = this->sensor.getTempC(this->devices[i]);
       send(this->temp_msg[i].set(this->temps[i], 2));
     }
     this->request = false;
+  }
+  if (lastRun == 0 || lastRun + delayMS < millis()) {
+    // Get temperature event and print its value.
+    this->lastRun = millis();
+    this->sensor.requestTemperatures();
+    this->request = true;
   }
 }
 

@@ -34,7 +34,7 @@ void HcSr04Component::presentation() {
 }
 
 void HcSr04Component::loop() {
-  if (lastRun + delayMS < millis()) {
+  if (lastRun == 0 || lastRun + delayMS < millis()) {
     double old_distance = this->distance;
     this->sensor.measure();
     this->distance = this->sensor.get_cm();

@@ -1,5 +1,7 @@
 #include "core.h"
 
+ADC_MODE(ADC_VCC);
+
 ESP8266WebServer http_server(80);
 
 AbstractComponent *modules[] = {

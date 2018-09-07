@@ -1,6 +1,6 @@
-#include "core.h"
+// ADC_MODE(ADC_VCC);
 
-ADC_MODE(ADC_VCC);
+#include "core.h"
 
 ESP8266WebServer http_server(80);
 

@@ -19,7 +19,7 @@
 class DS18Component : public AbstractComponent,
                       public AbstractTemperatureComponent {
   MyMessage *temp_msg;
-  uint32_t delayMS = 2000, lastRun = 0;
+  uint32_t delayMS = 2000, lastRun = 0, conversionTime;
   int16_t pin;
   DallasTemperature sensor;
   String addr2string(DeviceAddress deviceAddr);
@@ -28,7 +28,7 @@ class DS18Component : public AbstractComponent,
   DeviceAddress devices[MAX_DEVICES];
   float temps[MAX_DEVICES];
   uint8_t ds18Count = 0;
-  bool request = false;
+  bool request = false, async = false;
   OneWire *_wire;
 
 public:

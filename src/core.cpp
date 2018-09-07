@@ -107,9 +107,9 @@ void setupNTP() {
 void setup() {
   //	Serial.end();
   //	Serial1.end();
-  pinMode(0, INPUT_PULLUP);
-  pinMode(2, INPUT_PULLUP);
-  pinMode(15, INPUT);
+  pinMode(0, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(15, OUTPUT);
   digitalWrite(0, HIGH);
   digitalWrite(2, HIGH);
   digitalWrite(15, LOW);
@@ -149,6 +149,7 @@ void loop() {
     modules[i]->loop();
     Log.verbose(
         ("Module " + modules[i]->moduleName() + " processed." CR).c_str());
+    yield();
   }
 #ifdef ENABLE_STATUS
   Log.verbose("Processing module status" CR);
@@ -157,6 +158,4 @@ void loop() {
 #endif
 
   Log.verbose("loop end" CR);
-
-  yield();
 }

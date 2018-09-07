@@ -21,14 +21,12 @@ String DS18Component::addr2string(DeviceAddress deviceAddr) {
 
 // Continue to check if the IC has responded with a temperature
 bool DS18Component::deviceIsReady() {
-  int delms =
-      this->sensor.millisToWaitForConversion(this->sensor.getResolution());
   if (this->sensor.getCheckForConversion() &&
       !this->sensor.isParasitePowerMode()) {
     return (this->sensor.isConversionComplete() ||
-            (millis() - delms >= this->lastRun));
+            (millis() - conversionTime >= this->lastRun));
   } else {
-    return millis() - delms >= this->lastRun;
+    return millis() - conversionTime >= this->lastRun;
   }
 }
 
@@ -50,7 +48,9 @@ void DS18Component::setup() {
   this->sensor = DallasTemperature();
   this->sensor.setOneWire(this->_wire);
   this->sensor.begin();
-  this->sensor.setWaitForConversion(false);
+  conversionTime =
+      this->sensor.millisToWaitForConversion(this->sensor.getResolution());
+  this->sensor.setWaitForConversion(!async);
   for (int i = 0; i < MAX_DEVICES; i++) {
     DeviceAddress da;
     if (this->sensor.getAddress(da, i)) {
@@ -76,18 +76,18 @@ void DS18Component::presentation() {
 }
 
 void DS18Component::loop() {
-  if (this->deviceIsReady()) {
-    for (int8_t i = 0; i < this->ds18Count; i++) {
-      this->temps[i] = this->sensor.getTempC(this->devices[i]);
-      send(this->temp_msg[i].set(this->temps[i], 2));
-    }
-    this->request = false;
-  }
   if (lastRun == 0 || lastRun + delayMS < millis()) {
     // Get temperature event and print its value.
     this->lastRun = millis();
     this->sensor.requestTemperatures();
     this->request = true;
+  }
+  if (this->request && (!async || this->deviceIsReady())) {
+    for (int8_t i = 0; i < this->ds18Count; i++) {
+      this->temps[i] = this->sensor.getTempC(this->devices[i]);
+      send(this->temp_msg[i].set(this->temps[i], 2));
+    }
+    this->request = false;
   }
 }
 

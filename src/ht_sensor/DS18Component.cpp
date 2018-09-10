@@ -44,7 +44,6 @@ DS18Component::~DS18Component() {
 
 void DS18Component::setup() {
   pinMode(this->pin, INPUT);
-  pinMode(2, INPUT); // TODO replace by custom initialization from Makefile
   this->_wire = new OneWire(this->pin);
   this->sensor = DallasTemperature();
   this->sensor.setOneWire(this->_wire);

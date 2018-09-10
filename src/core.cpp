@@ -113,6 +113,9 @@ void setup() {
   digitalWrite(0, HIGH);
   digitalWrite(2, HIGH);
   digitalWrite(15, LOW);
+#ifdef INIT_STUFF
+  INIT_STUFF
+#endif
 #ifndef DISABLE_LOGGING
   DEBUG_ESP_PORT.begin(115200);
 #endif

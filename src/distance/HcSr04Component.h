@@ -12,13 +12,13 @@
 #include "AbstractDistanceComponent.h"
 #include "Ultrasonic.h"
 
-#define HC_SR04_DELAY 2000 // 15*60*1000
+#define HC_SR04_DELAY 60000 // 15*60*1000
 
 class HcSr04Component : public AbstractComponent,
                         public AbstractDistanceComponent {
   MyMessage distance_msg;
   float distance = 0;
-  uint32_t delayMS = 60000, lastRun = 0;
+  uint32_t delayMS = 2000, lastRun = 0;
   int16_t trigPin = 0, echoPin = 0;
 
 public:

@@ -87,10 +87,13 @@ void StatusComponent::jsonPrefix(JsonObject &p) {
   p["Node ID"] = nodeId;
   p["Out Queue"] = MY_MQTT_PUBLISH_TOPIC_PREFIX;
   p["In Queue"] = MY_MQTT_SUBSCRIBE_TOPIC_PREFIX;
-  p["Time"] = NTP.getTimeDateString() +
-              (NTP.isSummerTime() ? " Summer" : " Winter") + " Time.";
-  p["Uptime"] = NTP.getUptimeString() + " since " +
-                NTP.getTimeDateString(NTP.getFirstSync()).c_str();
+  JsonObject &time = p.createNestedObject("Time");
+  time["date"] = NTP.getDateStr();
+  time["time"] = NTP.getTimeStr();
+  time["DST"] = NTP.isSummerTime() ? "Summer" : "Winter";
+  JsonObject &uptime = p.createNestedObject("Uptime");
+  uptime["uptime"] = NTP.getUptimeString();
+  uptime["since"] = NTP.getTimeDateString(NTP.getFirstSync());
   p["WiFi"] = WiFi.isConnected() ? "connected" : "not connected";
 }
 

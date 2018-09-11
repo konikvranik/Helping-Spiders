@@ -60,10 +60,14 @@ float HTUComponent::getTemperature() { return temp; }
 void HTUComponent::reportStatus(JsonObject &jo) {
   JsonObject &temp = jo.createNestedObject("temperature");
   temp["ID"] = this->sensor_id;
+  temp["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                  String(this->sensor_id) + String("/1/0/0");
+  temp["type"] = "humidity";
   temp["value"] = String(this->getTemperature());
   temp["unit"] = "°C";
   JsonObject &hum = jo.createNestedObject("humidity");
   hum["ID"] = this->hum_sensor_id;
+  hum["type"] = "humidity";
   hum["value"] = String(this->getHumidity());
   hum["unit"] = "%";
 }

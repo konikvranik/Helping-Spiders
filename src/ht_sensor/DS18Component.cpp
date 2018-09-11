@@ -104,6 +104,9 @@ void DS18Component::reportStatus(JsonObject &jo) {
   for (int8_t i = 0; i < this->ds18Count; i++) {
     JsonObject &dv = devices.createNestedObject(String(this->sensor_id + i));
     dv["address"] = addr2string(this->devices[i]);
+    dv["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                  String(this->sensor_id + i) + String("/1/0/0");
+    dv["type"] = "temperature";
     dv["value"] = this->temps[i];
     dv["unit"] = "°C";
   }

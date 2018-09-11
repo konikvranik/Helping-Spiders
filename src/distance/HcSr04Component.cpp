@@ -48,8 +48,10 @@ float HcSr04Component::getDistance() { return this->distance; }
 
 void HcSr04Component::reportStatus(JsonObject &jo) {
   jo["ID"] = this->sensor_id;
+  jo["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                String(this->sensor_id) + String("/1/0/13");
   jo["type"] = "distance";
-  jo["value"] = String(this->getDistance());
+  jo["value"] = this->getDistance();
   jo["unit"] = "cm";
 }
 

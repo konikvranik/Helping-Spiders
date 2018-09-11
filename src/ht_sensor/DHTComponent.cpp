@@ -55,10 +55,16 @@ float DHTComponent::getTemperature() { return sensor.temperature; }
 void DHTComponent::reportStatus(JsonObject &jo) {
   JsonObject &temp = jo.createNestedObject("temperature");
   temp["ID"] = this->sensor_id;
+  temp["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                  String(this->sensor_id) + String("/1/0/0");
+  temp["type"] = "temperature";
   temp["value"] = String(this->getTemperature());
   temp["unit"] = "°C";
   JsonObject &hum = jo.createNestedObject("humidity");
   hum["ID"] = this->hum_sensor_id;
+  hum["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                 String(this->sensor_id) + String("/1/0/1");
+  hum["type"] = "humidity";
   hum["value"] = String(this->getHumidity());
   hum["unit"] = "%";
 }

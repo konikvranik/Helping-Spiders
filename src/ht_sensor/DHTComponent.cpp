@@ -53,11 +53,14 @@ float DHTComponent::getHumidity() { return sensor.humidity; }
 float DHTComponent::getTemperature() { return sensor.temperature; }
 
 void DHTComponent::reportStatus(JsonObject &jo) {
-  JsonObject &id = jo.createNestedObject("ID");
-  id["temperature"] = this->sensor_id;
-  id["humidity"] = this->hum_sensor_id;
-  jo["Temperature"] = String(this->getTemperature()) + " °C";
-  jo["Humidity"] = String(this->getHumidity()) + " %";
+  JsonObject &temp = jo.createNestedObject("temperature");
+  temp["ID"] = this->sensor_id;
+  temp["value"] = String(this->getTemperature());
+  temp["unit"] = "°C";
+  JsonObject &hum = jo.createNestedObject("humidity");
+  hum["ID"] = this->hum_sensor_id;
+  hum["value"] = String(this->getHumidity());
+  hum["unit"] = "%";
 }
 
 void DHTComponent::receive(const MyMessage &) {}

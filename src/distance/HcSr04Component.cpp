@@ -47,9 +47,10 @@ void HcSr04Component::loop() {
 float HcSr04Component::getDistance() { return this->distance; }
 
 void HcSr04Component::reportStatus(JsonObject &jo) {
-  JsonObject &id = jo.createNestedObject("ID");
-  id["distance"] = this->sensor_id;
-  jo["Distance"] = String(this->getDistance()) + " cm";
+  jo["ID"] = this->sensor_id;
+  jo["type"] = "distance";
+  jo["value"] = String(this->getDistance());
+  jo["unit"] = "cm";
 }
 
 void HcSr04Component::receive(const MyMessage &) {}

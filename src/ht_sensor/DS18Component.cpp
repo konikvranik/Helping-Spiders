@@ -94,13 +94,16 @@ void DS18Component::loop() {
 float DS18Component::getTemperature() { return NULL; }
 
 void DS18Component::reportStatus(JsonObject &jo) {
-  jo["parasite"] = this->sensor.isParasitePowerMode();
-  jo["count"] = this->sensor.getDeviceCount();
-  jo["DS18count"] = this->sensor.getDS18Count();
-  jo["complete"] = this->sensor.isConversionComplete();
+  jo["ID"] = this->sensor_id;
+  JsonObject &params = jo.createNestedObject("params");
+  params["parasite"] = this->sensor.isParasitePowerMode();
+  params["count"] = this->sensor.getDeviceCount();
+  params["DS18count"] = this->sensor.getDS18Count();
+  params["complete"] = this->sensor.isConversionComplete();
   JsonObject &devices = jo.createNestedObject("devices");
   for (int8_t i = 0; i < this->ds18Count; i++) {
-    JsonObject &dv = devices.createNestedObject(addr2string(this->devices[i]));
+    JsonObject &dv = devices.createNestedObject(String(this->sensor_id + i));
+    dv["address"] = addr2string(this->devices[i]);
     dv["value"] = this->temps[i];
     dv["unit"] = "°C";
   }

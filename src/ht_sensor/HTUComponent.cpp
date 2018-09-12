@@ -67,6 +67,8 @@ void HTUComponent::reportStatus(JsonObject &jo) {
   temp["unit"] = "°C";
   JsonObject &hum = jo.createNestedObject("humidity");
   hum["ID"] = this->hum_sensor_id;
+  hum["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
+                 String(this->sensor_id) + String("/1/0/1");
   hum["type"] = "humidity";
   hum["value"] = String(this->getHumidity());
   hum["unit"] = "%";

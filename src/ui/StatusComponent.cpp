@@ -71,12 +71,12 @@ String StatusComponent::ModulesStatus() {
 String StatusComponent::ModulesJson() {
   StaticJsonBuffer<2000> jsonBuffer;
   JsonObject &p = jsonBuffer.createObject();
-  jsonPrefix(p);
   JsonObject &m = p.createNestedObject("modules");
   for (int i = 0; i < this->components_count; i++) {
     JsonObject &jo = m.createNestedObject(components[i]->moduleName());
     this->components[i]->reportStatus(jo);
   }
+  jsonPrefix(p);
   jsonSuffix(p);
   String s;
   p.prettyPrintTo(s);

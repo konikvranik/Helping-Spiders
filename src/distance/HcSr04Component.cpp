@@ -37,6 +37,7 @@ void HcSr04Component::loop() {
   if (lastRun == 0 || lastRun + delayMS < millis()) {
     double old_distance = this->distance;
     this->sensor.measure();
+
     this->distance = this->sensor.get_cm();
     lastRun = millis();
     if (old_distance != this->distance)
@@ -56,5 +57,11 @@ void HcSr04Component::reportStatus(JsonObject &jo) {
 }
 
 void HcSr04Component::receive(const MyMessage &) {}
+
+String HcSr04Component::prometheus() {
+  return String("NODE_ID_") + String("_distance") + String("{ node=\"") +
+         String("NODE_ID") + String("\", unit=\"cm\", type=\"distance\"} ") +
+         String(this->getDistance()) + String(CR);
+}
 
 String HcSr04Component::moduleName() { return "HC-SR04"; }

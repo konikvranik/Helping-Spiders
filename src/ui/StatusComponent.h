@@ -42,6 +42,7 @@ public:
   virtual void presentation();
   virtual void reportStatus(JsonObject &);
   virtual String moduleName();
+  String prometheus();
 };
 
 #endif /* STATUSCOMPONENT_H_ */

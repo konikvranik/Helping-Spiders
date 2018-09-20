@@ -114,4 +114,16 @@ void DS18Component::reportStatus(JsonObject &jo) {
 
 void DS18Component::receive(const MyMessage &) {}
 
+String DS18Component::prometheus() {
+  String s = "";
+  for (int8_t i = 0; i < this->ds18Count; i++) {
+    s = s + String("NODE_ID_") + String(i) + String("_temperature") +
+        String("{ node=\"") + String("NODE_ID") + String("\", device=\"") +
+        String(i) + String("\", address=\"") + addr2string(this->devices[i]) +
+        String("\", unit=\"°C\", type=\"temperature\"} ") +
+        String(this->temps[i]) + String(CR);
+  }
+  return s;
+}
+
 String DS18Component::moduleName() { return "DS18"; }

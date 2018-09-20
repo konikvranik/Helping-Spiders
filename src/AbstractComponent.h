@@ -24,6 +24,7 @@ public:
   virtual void receive(const MyMessage &);
   virtual void presentation();
   virtual void reportStatus(JsonObject &);
+  String prometheus() { return ""; }
   virtual String moduleName();
 };
 

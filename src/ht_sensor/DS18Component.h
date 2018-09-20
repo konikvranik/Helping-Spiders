@@ -40,6 +40,7 @@ public:
   virtual void presentation();
   virtual float getTemperature();
   virtual void reportStatus(JsonObject &);
+  String prometheus();
   virtual String moduleName();
 };
 

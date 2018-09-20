@@ -31,6 +31,7 @@ public:
   virtual void presentation();
   virtual float getDistance();
   virtual void reportStatus(JsonObject &);
+  String prometheus();
   virtual String moduleName();
 };
 

@@ -180,12 +180,14 @@ const Color RGBComponent::h2c(const String rgb) {
 
 const Color RGBComponent::cn(Color rgb) {
   return Color(
-      rgb.red < 0 ? 0 : (rgb.red > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1
-                                                      : rgb.red,
-      rgb.green < 0 ? 0 : (rgb.green > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1
-                                                          : rgb.green,
-      rgb.blue < 0 ? 0 : (rgb.blue > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1
-                                                        : rgb.blue);
+      rgb.red < 0 ? 0
+                  : (rgb.red > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.red,
+      rgb.green < 0
+          ? 0
+          : (rgb.green > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.green,
+      rgb.blue < 0
+          ? 0
+          : (rgb.blue > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.blue);
 }
 
 const int16_t RGBComponent::c2b(const Color c) {

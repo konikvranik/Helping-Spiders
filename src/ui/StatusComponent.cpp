@@ -144,10 +144,12 @@ void StatusComponent::reportStatus(JsonObject &) {}
 String StatusComponent::moduleName() { return "status"; }
 
 String StatusComponent::prometheus() {
-  String result = "";
+  String result = String("uptime{node=\"") + NODE_ID + "\"} " +
+                  String(NTP.getUptime()) + String(CR);
   for (int i = 0; i < this->components_count; i++) {
     result += this->components[i]->prometheus();
   }
+  return result;
 }
 
 String StatusComponent::moduleNames() {

@@ -154,10 +154,12 @@ String StatusComponent::prometheusReport() {
 	Prometheus* p = new Prometheus("uptime", NTP.getUptime(), "counter",
 			"Uptime of node "NODE_ID);
 	p->attribute("node", String(NODE_ID));
+	p->attribute("unit", "s");
 	String result = p->to_string(true);
 	delete p;
 	p = new Prometheus("loops", lps, "counter", "Number of loops per second");
 	p->attribute("node", String(NODE_ID));
+	p->attribute("unit", "s⁻¹");
 	result += p->to_string(true);
 	delete p;
 	p = new Prometheus("boot_mode", ESP.getBootMode(), "untyped", "Boot mode of ESP8266");

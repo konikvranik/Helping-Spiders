@@ -17,15 +17,25 @@
 
 class AbstractComponent {
 public:
-  uint8_t sensor_id;
-  AbstractComponent(const uint8_t sensor_id) { this->sensor_id = sensor_id; }
-  virtual void setup();
-  virtual void loop();
-  virtual void receive(const MyMessage &);
-  virtual void presentation();
-  virtual void reportStatus(JsonObject &);
-  String prometheus() { return ""; }
-  virtual String moduleName();
+	uint8_t sensor_id;
+	AbstractComponent(const uint8_t sensor_id) {
+		this->sensor_id = sensor_id;
+	}
+	virtual void setup()=0;
+	virtual void loop()=0;
+	virtual void receive(const MyMessage &)=0;
+	virtual void presentation()=0;
+	virtual void reportStatus(JsonObject &)=0;
+	virtual String prometheus() {
+		return "";
+	}
+	virtual String moduleName()=0;
 };
+
+/*
+ String AbstractComponent::prometheus() {
+ return "none{} 0" CR;
+ }
+ */
 
 #endif /* ABSTRACT_COMPONENT_H_ */

@@ -12,6 +12,7 @@
 #include "AbstractTemperatureComponent.h"
 #include <DallasTemperature.h>
 #include <OneWire.h>
+#include "../ui/Prometheus.h"
 
 #define DS18_DELAY 30000
 #define MAX_DEVICES 255

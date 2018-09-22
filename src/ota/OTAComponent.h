@@ -17,20 +17,22 @@
 #include <ESP8266mDNS.h>
 #include <WiFiClient.h>
 
-class OTAComponent : public AbstractComponent {
-  ESP8266WebServer *_server;
-  ESP8266HTTPUpdateServer httpUpdater;
-  String nodeId;
+class OTAComponent: public AbstractComponent {
+	ESP8266WebServer *_server;
+	ESP8266HTTPUpdateServer httpUpdater;
+	String nodeId;
+	boolean updating = false;
 
 public:
-  OTAComponent(const String, ESP8266WebServer *);
-  virtual ~OTAComponent();
-  virtual void setup();
-  virtual void loop();
-  virtual void receive(const MyMessage &);
-  virtual void presentation();
-  virtual void reportStatus(JsonObject &);
-  virtual String moduleName();
+	OTAComponent(const String, ESP8266WebServer *);
+	virtual ~OTAComponent();
+	virtual void setup();
+	virtual void loop();
+	virtual void receive(const MyMessage &);
+	virtual void presentation();
+	virtual void reportStatus(JsonObject &);
+	virtual String moduleName();
+	virtual boolean isUpdating();
 };
 
 #endif /* OTACOMPONENT_H_ */

@@ -15,7 +15,6 @@
 #include <NtpClientLib.h>
 #include "Prometheus.h"
 
-
 #define LOG_PERIOD 5000 // ms
 
 class StatusComponent: public AbstractComponent {

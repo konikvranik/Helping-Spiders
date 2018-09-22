@@ -18,6 +18,7 @@
 #undef MY_DEBUG
 #endif
 
+//#define MY_SPECIAL_DEBUG
 // Controller ip address. Enables client mode (default is "server" mode).
 // Also enable this if MY_USE_UDP is used and you want sensor data sent
 // somewhere.

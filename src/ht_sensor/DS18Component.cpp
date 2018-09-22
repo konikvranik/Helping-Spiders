@@ -43,7 +43,6 @@ DS18Component::DS18Component(const uint8_t sensor_id, const int16_t pin) :
 	this->sensor.begin();
 	conversionTime = this->sensor.millisToWaitForConversion(
 			this->sensor.getResolution());
-	this->temp_msg = new MyMessage[this->ds18Count];
 }
 
 DS18Component::~DS18Component() {

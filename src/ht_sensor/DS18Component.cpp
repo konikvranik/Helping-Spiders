@@ -67,7 +67,7 @@ void DS18Component::setup() {
 }
 
 void DS18Component::presentation() {
-	this->temp_msg = new MyMessage[this->ds18Count];
+	//this->temp_msg = new MyMessage[this->ds18Count];
 	for (uint8_t i = 0; i < this->ds18Count; i++) {
 		this->temp_msg[i] = MyMessage(this->sensor_id + i, V_TEMP);
 		present(this->sensor_id + i, S_TEMP,

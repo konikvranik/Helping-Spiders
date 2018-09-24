@@ -150,6 +150,7 @@ void loop() {
 	for (int i = 0; i < module_count; i++) {
 #ifdef ENABLE_OTA
 		if(static_cast<OTAComponent*>(modules[0])->isUpdating()) {
+			ArduinoOTA.handle();
 			break;
 		}
 #endif

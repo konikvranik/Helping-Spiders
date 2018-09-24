@@ -153,8 +153,9 @@ flash: $(MODULE)
 .PHONY: flash
 
 upload: $(MODULE)
+	@date
 	time curl -X POST --progress-bar -F "update=@$(MODULE)" http://$(MODULE_IP)/update >&2
-	rm $(MODULE)
+	@date
 .PHONY: upload
 
 query_library.%:

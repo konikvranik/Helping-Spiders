@@ -13,14 +13,14 @@ Prometheus::Prometheus(const String name, float value, String type,
 	this->type = type;
 	this->description = description;
 	this->value = value;
+	this->attribute("node", String(NODE_ID));
+	this->attribute("version", String(SV));
+
 }
 
 Prometheus::Prometheus(const String name, float value, String type,
 		String description, uint16_t timestamp) {
-	this->name = name;
-	this->type = type;
-	this->description = description;
-	this->value = value;
+	Prometheus(name, value,type,description);
 	this->timestamp = timestamp;
 }
 

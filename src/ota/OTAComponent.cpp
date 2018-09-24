@@ -53,7 +53,6 @@ void OTAComponent::setup() {
 
 	ArduinoOTA.onError([&](ota_error_t error) {
 		(void)error;
-		ESP.restart();
 		this->updating=false;
 	});
 

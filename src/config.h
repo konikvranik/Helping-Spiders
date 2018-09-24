@@ -2,7 +2,7 @@
 #define CONFIG_h
 
 #define SN "multisensor " NODE_ID
-#define SV "1.0"
+#define SV "2.0"
 #define MY_GATEWAY_MAX_CLIENTS 3
 #define MY_ESP8266_SSID WIFI_SSID
 #define MY_ESP8266_PASSWORD WIFI_PASSWORD

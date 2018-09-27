@@ -62,6 +62,7 @@ void HcSr04Component::receive(const MyMessage &) {
 }
 
 String HcSr04Component::prometheus() {
+	if(this->getDistance() <= 0) return "";
 	Prometheus p("distance", this->getDistance(),"gauge", "Distance measured by HC-SR04 ultrasonic sensor.");
 	p.attribute("unit", "cm");
 	p.attribute("type", "distance");

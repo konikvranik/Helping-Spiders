@@ -121,6 +121,7 @@ String DS18Component::prometheus() {
 	String s = "";
 	Prometheus* p;
 	for (int8_t i = 0; i < this->ds18Count; i++) {
+		if (this->temps[i] == -127) continue;
 		p = new Prometheus(NODE_ID"_" + String(i) + "_temperature", this->temps[i], "gauge", "Temperature measured by DS18b20 with address " + addr2string(this->devices[i]) + " on "+ String(i)+". position.");
 		p->attribute("device", String(i));
 		p->attribute("address", addr2string(this->devices[i]));

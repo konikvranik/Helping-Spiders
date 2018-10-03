@@ -84,8 +84,14 @@ void DS18Component::loop() {
 	}
 	if (this->request && (!async || this->deviceIsReady())) {
 		for (int8_t i = 0; i < this->ds18Count; i++) {
-			this->temps[i] = this->sensor.getTempC(this->devices[i]);
-			send(this->temp_msg[i].set(this->temps[i], 2));
+			float tmp = this->sensor.getTempC(this->devices[i]);
+			if (tmp != -127) {
+				if (tmp != this->temps[i]) {
+					this->temps[i] = tmp;
+					send(this->temp_msg[i].set(this->temps[i], 2));
+				}
+
+			}
 		}
 		this->request = false;
 	}

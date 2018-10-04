@@ -148,12 +148,6 @@ void StatusComponent::loop() {
 	}
 }
 
-void StatusComponent::presentation() {
-}
-
-void StatusComponent::receive(const MyMessage &message) {
-}
-
 void StatusComponent::reportStatus(JsonObject &) {
 }
 

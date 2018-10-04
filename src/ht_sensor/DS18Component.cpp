@@ -66,79 +66,76 @@ void DS18Component::setup() {
 		delayMS = DS18_DELAY;
 }
 
-void DS18Component::presentation() {
-	this->temp_msg = new MyMessage[this->ds18Count];
+void DS18Component::presentation(MQTTClient* mqtt) {
+	AbstractComponent::presentation(mqtt);
 	for (uint8_t i = 0; i < this->ds18Count; i++) {
-		this->temp_msg[i] = MyMessage(this->sensor_id + i, V_TEMP);
-		present(this->sensor_id + i, S_TEMP,
-				(String(addr2string(this->devices[i]))).c_str());
-	}
+	mqtt->publish(String(NODE_ID"/temperature/") + String(this->sensor_id) + String("/")
+			+ String(i),String(addr2string(this->devices[i])));
+}
 }
 
 void DS18Component::loop() {
-	if (lastRun == 0 || lastRun + delayMS < millis()) {
-		// Get temperature event and print its value.
-		this->lastRun = millis();
-		this->sensor.requestTemperatures();
-		this->request = true;
-	}
-	if (this->request && (!async || this->deviceIsReady())) {
-		for (int8_t i = 0; i < this->ds18Count; i++) {
-			float tmp = this->sensor.getTempC(this->devices[i]);
-			if (tmp != -127) {
-				if (tmp != this->temps[i]) {
-					this->temps[i] = tmp;
-					send(this->temp_msg[i].set(this->temps[i], 2));
-				}
-
+if (lastRun == 0 || lastRun + delayMS < millis()) {
+	// Get temperature event and print its value.
+	this->lastRun = millis();
+	this->sensor.requestTemperatures();
+	this->request = true;
+}
+if (this->request && (!async || this->deviceIsReady())) {
+	for (int8_t i = 0; i < this->ds18Count; i++) {
+		float tmp = this->sensor.getTempC(this->devices[i]);
+		if (tmp != -127) {
+			if (tmp != this->temps[i]) {
+				this->temps[i] = tmp;
+				mqtt->publish(makeTopic(String("/" + String(i))),
+						String(this->temps[i]));
 			}
+
 		}
-		this->request = false;
 	}
+	this->request = false;
+}
 }
 
 float DS18Component::getTemperature() {
-	return NULL;
+return NULL;
 }
 
 void DS18Component::reportStatus(JsonObject &jo) {
-	jo["ID"] = this->sensor_id;
-	JsonObject &params = jo.createNestedObject("params");
-	params["parasite"] = this->sensor.isParasitePowerMode();
-	params["count"] = this->sensor.getDeviceCount();
-	params["DS18count"] = this->sensor.getDS18Count();
-	params["complete"] = this->sensor.isConversionComplete();
-	JsonObject &devices = jo.createNestedObject("devices");
-	for (int8_t i = 0; i < this->ds18Count; i++) {
-		JsonObject &dv = devices.createNestedObject(
-				String(this->sensor_id + i));
-		dv["address"] = addr2string(this->devices[i]);
-		dv["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") + String(this->sensor_id + i) + String("/1/0/0");
-		dv["type"] = "temperature";
-		dv["value"] = this->temps[i];
-		dv["unit"] = "°C";
-	}
+jo["ID"] = this->sensor_id;
+JsonObject &params = jo.createNestedObject("params");
+params["parasite"] = this->sensor.isParasitePowerMode();
+params["count"] = this->sensor.getDeviceCount();
+params["DS18count"] = this->sensor.getDS18Count();
+params["complete"] = this->sensor.isConversionComplete();
+JsonObject &devices = jo.createNestedObject("devices");
+for (int8_t i = 0; i < this->ds18Count; i++) {
+	JsonObject &dv = devices.createNestedObject(String(this->sensor_id + i));
+	dv["address"] = addr2string(this->devices[i]);
+	dv["topic"] = makeTopic(String(i));
+	dv["type"] = this->AbstractTemperatureComponent::getType();
+	dv["value"] = this->temps[i];
+	dv["unit"] = "°C";
 }
-
-void DS18Component::receive(const MyMessage &) {
 }
 
 String DS18Component::prometheus() {
-	String s = "";
-	Prometheus* p;
-	for (int8_t i = 0; i < this->ds18Count; i++) {
-		if (this->temps[i] == -127) continue;
-		p = new Prometheus(NODE_ID"_" + String(i) + "_temperature", this->temps[i], "gauge", "Temperature measured by DS18b20 with address " + addr2string(this->devices[i]) + " on "+ String(i)+". position.");
-		p->attribute("device", String(i));
-		p->attribute("address", addr2string(this->devices[i]));
-		p->attribute("unit", "°C");
-		p->attribute("type", "temperature");
-		s += p->to_string(true);
-		delete p;
-	}
-	return s;
+String s = "";
+Prometheus* p;
+for (int8_t i = 0; i < this->ds18Count; i++) {
+	if (this->temps[i] == -127)
+		continue;
+	p = new Prometheus(NODE_ID"_" + String(i) + "_" + this->getType(), this->temps[i], "gauge", "Temperature measured by DS18b20 with address " + addr2string(this->devices[i]) + " on "+ String(i)+". position.");
+	p->attribute("device", String(i));
+	p->attribute("address", addr2string(this->devices[i]));
+	p->attribute("unit", "°C");
+	p->attribute("type", "temperature");
+	s += p->to_string(true);
+	delete p;
+}
+return s;
 }
 
 String DS18Component::moduleName() {
-	return "DS18";
+return "DS18";
 }

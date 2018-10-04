@@ -37,8 +37,6 @@ static code home_seq[] = { { 0, ILF_CLEAN }, { 1100, ILF_HOME } };
 
 class iLifeComponent: public AbstractComponent {
 	IRsend irsend;
-	MyMessage status_msg;
-	MyMessage ir_send_msg;
 
 public:
 	uint32_t last_sent = millis();
@@ -50,8 +48,8 @@ public:
 	virtual ~iLifeComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void receive(const MyMessage&);
-	virtual void presentation();
+	virtual void receive(String topic, String data, bool cont);
+	virtual void presentation(MQTTClient mqtt);
 	virtual void reportStatus(JsonObject&);
 	virtual String moduleName();
 	String seq2s();

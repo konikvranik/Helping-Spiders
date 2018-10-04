@@ -10,8 +10,7 @@
 
 #include <ArduinoJson.h>
 #include <ArduinoLog.h>
-#include <core/MyMessage.h>
-#include <core/MySensorsCore.h>
+#include <ESP8266MQTTClient.h>
 
 #define MSG_PERIOD 3000
 
@@ -23,13 +22,25 @@ public:
 	}
 	virtual void setup()=0;
 	virtual void loop()=0;
-	virtual void receive(const MyMessage &)=0;
-	virtual void presentation()=0;
+	virtual void receive(String topic, String data, bool cont) {
+	}
+	virtual void presentation(MQTTClient* mqtt) {
+		this->mqtt = mqtt;
+	}
+	virtual String getType() {
+		return "unknown";
+	}
+	virtual String makeTopic(String suffix) {
+		return String(NODE_ID"/")+ String(this->sensor_id) + String("/") + getType() + String("/")
+				 + suffix;
+	}
 	virtual void reportStatus(JsonObject &)=0;
 	virtual String prometheus() {
 		return "";
 	}
 	virtual String moduleName()=0;
+private:
+	MQTTClient* mqtt;
 };
 
 /*

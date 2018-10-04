@@ -17,33 +17,15 @@
 
 #include "AbstractComponent.h"
 
-//#include <core/MyMessage.h>
-
 #define EXPAND(N) QUOTE(N)
 #define QUOTE(NODE_ID) #NODE_ID
 // Set this node's subscribe and publish topic prefix
 
 // Enable these if your MQTT broker requires usenrame/password
-//#define MY_MQTT_USER "username"
-//#define MY_MQTT_PASSWORD "password"
 
-#if defined(MY_USE_UDP)
-#include <WiFiUDP.h>
-#else
 
 #include <ESP8266WiFi.h>
-
-#endif
-
-#define DEBUG_ESP_PORT Serial
-#define BLYNK_PRINT                                                            \
-  DEBUG_ESP_PORT // Comment this out to disable prints and save space
-#ifdef DISABLE_LOGGING
-#undef BLYNK_PRINT
-#define MY_DISABLED_SERIAL
-#endif
-
-#include <MySensors.h>
+#include <ESP8266MQTTClient.h>
 
 #ifdef ENABLE_OTA
 #include "ota/OTAComponent.h"

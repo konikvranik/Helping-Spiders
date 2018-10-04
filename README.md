@@ -9,8 +9,6 @@ Actually supported are:
 * IR sender/receiver
 * iLife vacuume cleaner IR control.
 * LED strip
-* MySensors
-* Blynk
 * OTA
 * status reporting
 * DHT and HTU temperature and humidity sensors

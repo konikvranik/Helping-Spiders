@@ -13,6 +13,9 @@
 class AbstractTemperatureComponent {
 public:
 	virtual float getTemperature();
+	virtual String getType() {
+		return "temperature";
+	}
 };
 
 #endif /* ABSTRACT_COMPONENT_H_ */

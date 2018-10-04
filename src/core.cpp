@@ -1,8 +1,9 @@
-// ADC_MODE(ADC_VCC);
-
 #include "core.h"
 
+ADC_MODE(ADC_VCC);
+
 ESP8266WebServer http_server(80);
+MQTTClient mqtt;
 
 AbstractComponent *modules[] = {
 #ifdef ENABLE_OTA
@@ -45,25 +46,22 @@ StatusComponent status_component(NODE_ID, modules, module_count, &http_server);
 // ============================ PRESENTATION ===================
 void presentation() {
 	// Present locally attached sensors here
-	sendSketchInfo(SN, SV);
+	mqtt.publish("/hello", SN", "SV);
 	for (int i = 0; i < module_count; i++) {
 		Log.trace(
 				("Presenting module " + modules[i]->moduleName() + CR).c_str());
-		modules[i]->presentation();
+		modules[i]->presentation(mqtt);
 		Log.notice(
 				("Module " + modules[i]->moduleName() + " presented" CR).c_str());
 	}
 }
 
 // ======================= RECEIVE MESSAGE ====================
-void receive(const MyMessage &message) {
-	uint16_t int_val = message.getInt();
-	const char *str_val = message.getString();
-	char *cust_val = (char *) message.getCustom();
+void receive(String topic, String data, bool cont) {
 	for (int i = 0; i < module_count; i++) {
 		Log.trace(
 				("Receiving for module " + modules[i]->moduleName() + CR).c_str());
-		modules[i]->receive(message);
+		modules[i]->receive(topic, data, cont);
 	}
 }
 
@@ -110,9 +108,6 @@ void setup() {
 	pinMode(0, OUTPUT);
 	pinMode(2, OUTPUT);
 	pinMode(15, OUTPUT);
-	digitalWrite(0, HIGH);
-	digitalWrite(2, HIGH);
-	digitalWrite(15, LOW);
 #ifdef INIT_STUFF
 	INIT_STUFF
 #endif
@@ -138,6 +133,17 @@ void setup() {
 
 	setupNTP();
 	Log.notice("NTP initialized." CR);
+
+	mqtt.onConnect([](){
+		presentation();
+	});
+
+	mqtt.onData([](String topic, String data, bool cont){
+		receive(topic, data, cont);
+	});
+
+	mqtt.begin("mqtt://mqtt.home:1883", {.lwtTopic = "hello", .lwtMsg = "offline", .lwtQos = 0, .lwtRetain = 0});
+	mqtt.subscribe("/qos1", 1);
 
 	Log.notice("Setup done." CR);
 }

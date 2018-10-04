@@ -11,6 +11,9 @@
 class AbstractDistanceComponent {
 public:
   virtual float getDistance();
+	virtual String getType() {
+		return "distance";
+	}
 };
 
 #endif /* ABSTRACT_DISTANCE_COMPONENT_H_ */

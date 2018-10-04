@@ -39,8 +39,6 @@ public:
 	virtual ~StatusComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void receive(const MyMessage &);
-	virtual void presentation();
 	virtual void reportStatus(JsonObject &);
 	virtual String moduleName();
 	String prometheusReport();

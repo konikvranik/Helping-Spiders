@@ -11,10 +11,8 @@ ARDUINO_LIBRARIES = \
 	IRremoteESP8266/2.0.3 \
 	DHT_sensor_library/1.3.0 \
 	ArduinoLog/1.0.1 \
-	MySensors/2.1.1 \
 	esp8266_mdns/1.1.6 \
 	Adafruit_Unified_Sensor/1.0.2 \
-	Blynk/0.4.8 \
 	NtpClientLib/2.0.5 \
 	Time/1.5.0 \
 	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \

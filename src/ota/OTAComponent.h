@@ -28,8 +28,6 @@ public:
 	virtual ~OTAComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void receive(const MyMessage &);
-	virtual void presentation();
 	virtual void reportStatus(JsonObject &);
 	virtual String moduleName();
 	virtual boolean isUpdating();

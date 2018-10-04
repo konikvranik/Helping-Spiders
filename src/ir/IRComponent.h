@@ -28,7 +28,6 @@ class IRComponent : public AbstractComponent {
   uint32_t sentCode;
   IRrecv irrecv;
   IRsend irsend;
-  MyMessage msgIrReceive, msgIrSend;
 
   static constexpr const char *TYPE2STRING[] = {
       "UNKONWN",    "RC5",     "RC6",     "NEC",          "Sony", "Panasonic",
@@ -41,8 +40,8 @@ public:
   virtual ~IRComponent();
   virtual void setup();
   virtual void loop();
-  virtual void receive(const MyMessage &);
-  virtual void presentation();
+  virtual void receive(String topic, String data, bool cont);
+  virtual void presentation(MQTTClient mqtt);
   virtual void reportStatus(JsonObject &);
   virtual String moduleName();
 };

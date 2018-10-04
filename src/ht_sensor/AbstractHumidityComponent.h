@@ -13,6 +13,10 @@
 class AbstractHumidityComponent {
 public:
 	virtual float getHumidity();
+	virtual String getType() {
+		return "temperature";
+	}
+
 };
 
 #endif /* ABSTRACT_COMPONENT_H_ */

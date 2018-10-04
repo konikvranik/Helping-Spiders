@@ -33,7 +33,6 @@
 class RGBComponent : public virtual AbstractComponent {
   uint32_t last_light_msg = millis();
   RGBLEDBlender rgbBlender;
-  MyMessage light_status_msg, dimmer_msg, rgb_msg, candle_msg, mode_msg;
   void blend(Color c);
   void sendMessage();
 
@@ -47,8 +46,8 @@ public:
   virtual ~RGBComponent();
   virtual void setup();
   virtual void loop();
-  virtual void receive(const MyMessage &);
-  virtual void presentation();
+  virtual void receive(String topic, String data, bool cont);
+  virtual void presentation(MQTTClient* mqtt);
   virtual void reportStatus(JsonObject &);
   static const String c2s(const Color);
   static const Color h2c(const String);

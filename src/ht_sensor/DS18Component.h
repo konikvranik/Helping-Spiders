@@ -19,7 +19,6 @@
 
 class DS18Component : public AbstractComponent,
                       public AbstractTemperatureComponent {
-  MyMessage *temp_msg;
   uint32_t delayMS = 2000, lastRun = 0, conversionTime;
   int16_t pin;
   DallasTemperature sensor;
@@ -37,8 +36,7 @@ public:
   virtual ~DS18Component();
   virtual void setup();
   virtual void loop();
-  virtual void receive(const MyMessage &);
-  virtual void presentation();
+  virtual void presentation(MQTTClient* mqtt);
   virtual float getTemperature();
   virtual void reportStatus(JsonObject &);
   String prometheus();

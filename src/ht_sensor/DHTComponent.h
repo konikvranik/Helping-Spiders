@@ -19,7 +19,6 @@
 class DHTComponent : public AbstractComponent,
                      public AbstractHumidityComponent,
                      public AbstractTemperatureComponent {
-  MyMessage temp_msg, hum_msg;
   int16_t temp = -273, hum = -1;
   uint32_t dhtDelayMS = 2000, dhtLastRun = 0;
   int16_t pinDHT = 1;
@@ -32,7 +31,6 @@ public:
   virtual ~DHTComponent();
   virtual void setup();
   virtual void loop();
-  virtual void receive(const MyMessage &);
   virtual void presentation();
   virtual float getHumidity();
   virtual float getTemperature();

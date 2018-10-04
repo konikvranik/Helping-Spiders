@@ -19,7 +19,6 @@
 -I~/.arduinocdt/libraries/IRremoteESP8266/2.0.3
 -I~/.arduinocdt/libraries/DHT_sensor_library/1.3.0
 -I~/.arduinocdt/libraries/ArduinoLog/1.0.1
--I~/.arduinocdt/libraries/MySensors/2.1.1
 -I~/.arduinocdt/libraries/esp8266_mdns/1.1.6
 -I~/.arduinocdt/libraries/Adafruit_Unified_Sensor/1.0.2
 -I~/.arduinocdt/libraries/Blynk/0.4.8
@@ -50,7 +49,6 @@
 -Ic:/users/petr/.arduinocdt/libraries/IRremoteESP8266/2.0.3
 -Ic:/users/petr/.arduinocdt/libraries/DHT_sensor_library/1.3.0
 -Ic:/users/petr/.arduinocdt/libraries/ArduinoLog/1.0.1
--Ic:/users/petr/.arduinocdt/libraries/MySensors/2.1.1
 -Ic:/users/petr/.arduinocdt/libraries/esp8266_mdns/1.1.6
 -Ic:/users/petr/.arduinocdt/libraries/Adafruit_Unified_Sensor/1.0.2
 -Ic:/users/petr/.arduinocdt/libraries/Blynk/0.4.8

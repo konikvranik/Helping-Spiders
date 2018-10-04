@@ -21,7 +21,6 @@
 class HTUComponent: public AbstractComponent,
 		public AbstractTemperatureComponent,
 		public AbstractHumidityComponent {
-	MyMessage temp_msg, hum_msg;
 	float temp = -273, hum = -1;
 	uint32_t delayMS = 2000, lastRun = 0;
 	//HTU21D sensor ;
@@ -36,7 +35,6 @@ public:
 	virtual ~HTUComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void receive(const MyMessage&);
 	virtual void presentation();
 	virtual float getHumidity();
 	virtual float getTemperature();

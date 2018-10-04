@@ -17,7 +17,6 @@
 
 class HcSr04Component: public AbstractComponent,
 		public AbstractDistanceComponent {
-	MyMessage distance_msg;
 	float distance = 0;
 	uint32_t delayMS = 2000, lastRun = 0;
 	int16_t trigPin = 0, echoPin = 0;
@@ -28,8 +27,7 @@ public:
 	virtual ~HcSr04Component();
 	virtual void setup();
 	virtual void loop();
-	virtual void receive(const MyMessage &);
-	virtual void presentation();
+	virtual void presentation(MQTTClient mqtt);
 	virtual float getDistance();
 	virtual void reportStatus(JsonObject &);
 	String prometheus();

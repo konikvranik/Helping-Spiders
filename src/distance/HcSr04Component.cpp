@@ -10,8 +10,7 @@
 HcSr04Component::HcSr04Component(const uint8_t sensor_id, const int16_t trigPin,
 		const int16_t echoPin) :
 		AbstractComponent(sensor_id) {
-	this->trigPin = trigPin, this->echoPin = echoPin, distance_msg = MyMessage(
-			sensor_id, V_DISTANCE);
+	this->trigPin = trigPin, this->echoPin = echoPin;
 	this->sensor = Ultrasonic(trigPin, echoPin);
 }
 
@@ -29,8 +28,8 @@ void HcSr04Component::setup() {
 	pinMode(echoPin, INPUT);
 }
 
-void HcSr04Component::presentation() {
-	present(sensor_id, S_DISTANCE, "Distance");
+void HcSr04Component::presentation(MQTTClient mqtt) {
+	mqtt.publish("/hello","");
 }
 
 void HcSr04Component::loop() {
@@ -42,7 +41,7 @@ void HcSr04Component::loop() {
 		if (tmp > 0) {
 			this->distance = tmp;
 			if (old_distance != this->distance)
-				send(distance_msg.set(this->distance, 2));
+				mqtt->publish(this->makeTopic(""), String(this->getDistance()));
 		}
 	}
 }
@@ -53,14 +52,10 @@ float HcSr04Component::getDistance() {
 
 void HcSr04Component::reportStatus(JsonObject &jo) {
 	jo["ID"] = this->sensor_id;
-	jo["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
-	String(this->sensor_id) + String("/1/0/13");
-	jo["type"] = "distance";
+	jo["topic"] = makeTopic("");
+	jo["type"] = this->AbstractDistanceComponent::getType();
 	jo["value"] = this->getDistance();
 	jo["unit"] = "cm";
-}
-
-void HcSr04Component::receive(const MyMessage &) {
 }
 
 String HcSr04Component::prometheus() {

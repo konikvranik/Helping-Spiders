@@ -25,7 +25,10 @@
 
 
 #include <ESP8266WiFi.h>
+#include <WiFiMan.h>
 #include <ESP8266MQTTClient.h>
+
+#define DEBUG_ESP_PORT Serial
 
 #ifdef ENABLE_OTA
 #include "ota/OTAComponent.h"

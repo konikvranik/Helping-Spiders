@@ -22,6 +22,9 @@ ARDUINO_LIBRARIES = \
 	OneWire/2.3.4 \
 	DallasTemperature/3.8.0 \
 	Ultrasonic_hc_sr04/0.4.0 \
+	ESP8266MQTTClient/1.0.5 \
+	WiFiMan/1.0.7 \
+	ESP8266OTA/1.0.1 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \
@@ -39,6 +42,7 @@ ARDUINO_CORE = \
 	libraries/ESP8266WiFi/src \
 	libraries/SPI \
 	libraries/Wire \
+	libraries/Hash/src \
 	cores/esp8266 \
 	variants/generic \
 

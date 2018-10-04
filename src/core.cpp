@@ -4,6 +4,8 @@ ADC_MODE(ADC_VCC);
 
 ESP8266WebServer http_server(80);
 MQTTClient mqtt;
+WiFiMan wman = WiFiMan();
+Config conf;
 
 AbstractComponent *modules[] = {
 #ifdef ENABLE_OTA
@@ -50,7 +52,7 @@ void presentation() {
 	for (int i = 0; i < module_count; i++) {
 		Log.trace(
 				("Presenting module " + modules[i]->moduleName() + CR).c_str());
-		modules[i]->presentation(mqtt);
+		modules[i]->presentation(&mqtt);
 		Log.notice(
 				("Module " + modules[i]->moduleName() + " presented" CR).c_str());
 	}
@@ -111,6 +113,8 @@ void setup() {
 #ifdef INIT_STUFF
 	INIT_STUFF
 #endif
+	wman.start();
+	wman.getConfig(&conf);
 #ifndef DISABLE_LOGGING
 	DEBUG_ESP_PORT.begin(115200);
 #endif
@@ -134,15 +138,16 @@ void setup() {
 	setupNTP();
 	Log.notice("NTP initialized." CR);
 
-	mqtt.onConnect([](){
+	mqtt.onConnect([]() {
 		presentation();
 	});
 
-	mqtt.onData([](String topic, String data, bool cont){
+	mqtt.onData([](String topic, String data, bool cont) {
 		receive(topic, data, cont);
 	});
 
-	mqtt.begin("mqtt://mqtt.home:1883", {.lwtTopic = "hello", .lwtMsg = "offline", .lwtQos = 0, .lwtRetain = 0});
+	mqtt.begin("mqtt://mqtt.home:1883", { .lwtTopic = "hello", .lwtMsg =
+			"offline", .lwtQos = 0, .lwtRetain = 0 });
 	mqtt.subscribe("/qos1", 1);
 
 	Log.notice("Setup done." CR);

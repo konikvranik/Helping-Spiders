@@ -90,8 +90,8 @@ String StatusComponent::ModulesJson() {
 
 void StatusComponent::jsonPrefix(JsonObject &p) {
 	p["Node ID"] = nodeId;
-	p["Out Queue"] = MY_MQTT_PUBLISH_TOPIC_PREFIX;
-	p["In Queue"] = MY_MQTT_SUBSCRIBE_TOPIC_PREFIX;
+	p["Out Queue"] = makeTopic("");
+	p["In Queue"] = makeTopic("");
 	JsonObject &time = p.createNestedObject("Time");
 	time["date"] = NTP.getDateStr();
 	time["time"] = NTP.getTimeStr();

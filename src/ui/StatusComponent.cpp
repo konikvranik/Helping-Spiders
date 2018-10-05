@@ -199,6 +199,14 @@ String StatusComponent::prometheusReport() {
 	p = new Prometheus("epc3", ESP.getResetInfoPtr()->epc3, "untyped", "epc3");
 	result += p->to_string(true);
 	delete p;
+	p = new Prometheus("cycle_count", ESP.getCycleCount(), "counter",
+			"ESP cycle count");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("cpu_freq", ESP.getCpuFreqMHz(), "gauge",
+			"ESP CPU frequency in MHz");
+	result += p->to_string(true);
+	delete p;
 	for (int i = 0; i < this->components_count; i++) {
 		result += this->components[i]->prometheus();
 	}

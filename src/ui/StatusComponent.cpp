@@ -56,7 +56,7 @@ void StatusComponent::setup() {
 String StatusComponent::ModulesStatus() {
 	String result = "";
 	for (int i = 0; i < this->components_count; i++) {
-		StaticJsonBuffer < 1000 > jsonBuffer;
+		StaticJsonBuffer<1000> jsonBuffer;
 		JsonObject &jo = jsonBuffer.createObject();
 		this->components[i]->reportStatus(jo);
 		if (jo.size() > 0) {
@@ -74,7 +74,7 @@ String StatusComponent::ModulesStatus() {
 }
 
 String StatusComponent::ModulesJson() {
-	StaticJsonBuffer < 2000 > jsonBuffer;
+	StaticJsonBuffer<2000> jsonBuffer;
 	JsonObject &p = jsonBuffer.createObject();
 	JsonObject &m = p.createNestedObject("modules");
 	for (int i = 0; i < this->components_count; i++) {
@@ -115,8 +115,19 @@ void StatusComponent::jsonSuffix(JsonObject &p) {
 	version["Boot"] = ESP.getBootVersion();
 	version["SDK"] = ESP.getSdkVersion();
 
+	JsonObject &reset = p.createNestedObject("reset");
+	reset["reason"] = ESP.getResetInfoPtr()->reason;
+	reset["exccause"] = ESP.getResetInfoPtr()->exccause;
+	reset["exccause"] = ESP.getResetInfoPtr()->excvaddr;
+	reset["depc"] = ESP.getResetInfoPtr()->depc;
+	reset["epc1"] = ESP.getResetInfoPtr()->epc1;
+	reset["epc2"] = ESP.getResetInfoPtr()->epc2;
+	reset["epc3"] = ESP.getResetInfoPtr()->epc3;
+
 	p["Chip ID"] = ESP.getChipId();
 	p["Boot mode"] = ESP.getBootMode();
+	p["Cycle count"] = ESP.getCycleCount();
+	p["CPU freq"] = ESP.getCpuFreqMHz();
 	p["VCC"] = ESP.getVcc();
 	p["Loops"] = lps < 0 ? "UNKNOWN" : String(lps);
 #ifdef DEVELOPMENT
@@ -160,7 +171,32 @@ String StatusComponent::prometheusReport() {
 	p->attribute("unit", "s⁻¹");
 	result += p->to_string(true);
 	delete p;
-	p = new Prometheus("boot_mode", ESP.getBootMode(), "untyped", "Boot mode of ESP8266");
+	p = new Prometheus("boot_mode", ESP.getBootMode(), "untyped",
+			"Boot mode of ESP8266");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("reset_reason", ESP.getResetInfoPtr()->reason, "untyped",
+			"Reason of reset");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("exception_cause", ESP.getResetInfoPtr()->exccause,
+			"untyped", "Cause of exception");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("exception_address", ESP.getResetInfoPtr()->excvaddr,
+			"untyped", "Address where exception occurs");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("depc", ESP.getResetInfoPtr()->depc, "untyped", "depc");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("epc1", ESP.getResetInfoPtr()->epc1, "untyped", "epc1");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("epc2", ESP.getResetInfoPtr()->epc2, "untyped", "epc2");
+	result += p->to_string(true);
+	delete p;
+	p = new Prometheus("epc3", ESP.getResetInfoPtr()->epc3, "untyped", "epc3");
 	result += p->to_string(true);
 	delete p;
 	for (int i = 0; i < this->components_count; i++) {

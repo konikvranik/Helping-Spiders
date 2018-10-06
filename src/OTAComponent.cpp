@@ -8,11 +8,11 @@
 #include "OTAComponent.h"
 
 #include <ArduinoLog.h>
-#include <WString.h>
-#include <unordered_map>
+//#include <WString.h>
+//#include <unordered_map>
 
 OTAComponent::OTAComponent(const String node_id, ESP8266WebServer *server) :
-		httpUpdater(true), AbstractComponent(-1) {
+		httpUpdater(true), AbstractComponent(node_id, -1) {
 	_server = server;
 	nodeId = node_id;
 }
@@ -60,12 +60,6 @@ void OTAComponent::setup() {
 
 	Log.verbose("Open http://%s.local/update in your browser" CR,
 			hostname.c_str());
-}
-
-void OTAComponent::presentation() {
-}
-
-void OTAComponent::receive(const MyMessage &) {
 }
 
 void OTAComponent::reportStatus(JsonObject &) {

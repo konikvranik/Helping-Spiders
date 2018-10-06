@@ -12,7 +12,7 @@
 #include "AbstractHumidityComponent.h"
 #include "AbstractTemperatureComponent.h"
 #include "dht.h"
-#include "../ui/Prometheus.h"
+#include "Prometheus.h"
 
 #define DHT_DELAY 2000 // 15*60*1000
 
@@ -31,7 +31,7 @@ public:
   virtual ~DHTComponent();
   virtual void setup();
   virtual void loop();
-  virtual void presentation();
+  virtual void presentation(MQTTClient* mqtt);
   virtual float getHumidity();
   virtual float getTemperature();
   virtual void reportStatus(JsonObject &);

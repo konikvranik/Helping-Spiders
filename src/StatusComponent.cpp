@@ -9,7 +9,7 @@
 
 StatusComponent::StatusComponent(String nodeid, AbstractComponent *components[],
 		uint8_t ccount, Print *logOutput) :
-		AbstractComponent(-1) {
+		AbstractComponent(nodeid, -1) {
 	this->logOutput = logOutput;
 	init(nodeid, components, ccount);
 }
@@ -23,7 +23,7 @@ void StatusComponent::init(String nodeid, AbstractComponent *components[],
 
 StatusComponent::StatusComponent(String nodeid, AbstractComponent *components[],
 		uint8_t ccount, ESP8266WebServer *webServer) :
-		AbstractComponent(-1) {
+		AbstractComponent(nodeid, -1) {
 	this->webServer = webServer;
 	init(nodeid, components, ccount);
 }

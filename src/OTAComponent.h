@@ -8,7 +8,7 @@
 #ifndef OTACOMPONENT_H_
 #define OTACOMPONENT_H_
 
-#include "../AbstractComponent.h"
+#include "AbstractComponent.h"
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <ESP8266HTTPUpdateServer.h>

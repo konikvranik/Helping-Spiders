@@ -41,7 +41,7 @@ public:
   virtual void setup();
   virtual void loop();
   virtual void receive(String topic, String data, bool cont);
-  virtual void presentation(MQTTClient mqtt);
+  virtual void presentation(MQTTClient* mqtt);
   virtual void reportStatus(JsonObject &);
   virtual String moduleName();
 };

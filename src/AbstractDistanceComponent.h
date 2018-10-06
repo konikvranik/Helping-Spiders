@@ -8,9 +8,14 @@
 #ifndef ABSTRACT_DISTANCE_COMPONENT_H_
 #define ABSTRACT_DISTANCE_COMPONENT_H_
 
-class AbstractDistanceComponent {
+#include "AbstractComponent.h"
+
+class AbstractDistanceComponent: public AbstractComponent {
 public:
-  virtual float getDistance();
+	AbstractDistanceComponent(const String node_id, const uint8_t sensor_id) :
+			AbstractComponent(node_id, sensor_id) {
+	}
+	virtual float getDistance();
 	virtual String getType() {
 		return "distance";
 	}

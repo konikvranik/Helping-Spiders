@@ -28,9 +28,8 @@ void HTUComponent::setup() {
   Log.notice("HTU started");
 }
 
-void HTUComponent::presentation() {
-  present(sensor_id, S_TEMP, "Temperature");
-  present(hum_sensor_id, S_HUM, "Humidity");
+void HTUComponent::presentation(MQTTClient* mqtt) {
+	AbstractComponent::presentation(mqtt);
 }
 
 void HTUComponent::loop() {
@@ -46,9 +45,9 @@ void HTUComponent::loop() {
     Log.notice("HTU hum");
     lastRun = millis();
     if (old_temp != temp)
-      send(temp_msg.set(temp, 2));
+    	mqtt->publish(makeTopic("temp"),String(temp));
     if (old_hum != hum)
-      send(hum_msg.set(hum, 2));
+    	mqtt->publish(makeTopic("hum"),String(hum));
   }
   Log.notice("HTU loop end\r\n");
 }
@@ -60,20 +59,16 @@ float HTUComponent::getTemperature() { return temp; }
 void HTUComponent::reportStatus(JsonObject &jo) {
   JsonObject &temp = jo.createNestedObject("temperature");
   temp["ID"] = this->sensor_id;
-  temp["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
-                  String(this->sensor_id) + String("/1/0/0");
-  temp["type"] = "humidity";
+  temp["topic"] = makeTopic("temp");
+  temp["type"] = "temperature";
   temp["value"] = String(this->getTemperature());
   temp["unit"] = "°C";
   JsonObject &hum = jo.createNestedObject("humidity");
   hum["ID"] = this->hum_sensor_id;
-  hum["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
-                 String(this->sensor_id) + String("/1/0/1");
+  hum["topic"] = makeTopic("hum");
   hum["type"] = "humidity";
   hum["value"] = String(this->getHumidity());
   hum["unit"] = "%";
 }
-
-void HTUComponent::receive(const MyMessage &) {}
 
 String HTUComponent::moduleName() { return "HTU"; }

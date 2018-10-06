@@ -5,17 +5,18 @@
  *      Author: hpa
  */
 
-#ifndef ABSTRACT_TEMPERATURE_COMPONENT_H_
-#define ABSTRACT_TEMPERATURE_COMPONENT_H_
+#ifndef ABSTRACT_HUMIDITY_COMPONENT_H_
+#define ABSTRACT_HUMIDITY_COMPONENT_H_
 
-//#include "core.h"
+#include "AbstractComponent.h"
 
-class AbstractTemperatureComponent {
+class AbstractHumidityComponent {
 public:
-	virtual float getTemperature();
+	virtual float getHumidity();
 	virtual String getType() {
 		return "temperature";
 	}
+
 };
 
 #endif /* ABSTRACT_COMPONENT_H_ */

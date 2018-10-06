@@ -11,8 +11,6 @@ DHTComponent::DHTComponent(const uint8_t sensor_id, const uint8_t hum_sensor_id,
                            const int16_t pin)
     : AbstractComponent(sensor_id) {
   this->hum_sensor_id = hum_sensor_id, this->pinDHT = pin,
-  temp_msg = MyMessage(sensor_id, V_TEMP);
-  hum_msg = MyMessage(hum_sensor_id, V_HUM);
   pinMode(sensor_id, INPUT);
   pinMode(hum_sensor_id, INPUT);
 }
@@ -27,9 +25,8 @@ void DHTComponent::setup() {
     dhtDelayMS = DHT_DELAY;
 }
 
-void DHTComponent::presentation() {
-  present(sensor_id, S_TEMP, "Temperature");
-  present(hum_sensor_id, S_HUM, "Humidity");
+void DHTComponent::presentation(MQTTClient* mqtt) {
+	AbstractComponent::presentation(mqtt);
 }
 
 void DHTComponent::loop() {
@@ -42,9 +39,9 @@ void DHTComponent::loop() {
     }
     dhtLastRun = millis();
     if (old_temp != sensor.temperature)
-      send(temp_msg.set(sensor.temperature, 2));
+    	mqtt->publish(makeTopic("temp"), String(sensor.temperature));
     if (old_hum != sensor.humidity)
-      send(hum_msg.set(sensor.humidity, 2));
+    	mqtt->publish(makeTopic("hum"), String(sensor.humidity));
   }
 }
 
@@ -55,20 +52,16 @@ float DHTComponent::getTemperature() { return sensor.temperature; }
 void DHTComponent::reportStatus(JsonObject &jo) {
   JsonObject &temp = jo.createNestedObject("temperature");
   temp["ID"] = this->sensor_id;
-  temp["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
-                  String(this->sensor_id) + String("/1/0/0");
+  temp["topic"] = makeTopic("");
   temp["type"] = "temperature";
   temp["value"] = String(this->getTemperature());
   temp["unit"] = "°C";
   JsonObject &hum = jo.createNestedObject("humidity");
   hum["ID"] = this->hum_sensor_id;
-  hum["topic"] = String(MY_MQTT_PUBLISH_TOPIC_PREFIX "/0/") +
-                 String(this->sensor_id) + String("/1/0/1");
+  hum["topic"] = makeTopic("");
   hum["type"] = "humidity";
   hum["value"] = String(this->getHumidity());
   hum["unit"] = "%";
 }
-
-void DHTComponent::receive(const MyMessage &) {}
 
 String DHTComponent::moduleName() { return "DHT"; }

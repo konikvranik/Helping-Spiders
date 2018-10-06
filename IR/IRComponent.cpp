@@ -11,8 +11,6 @@ IRComponent::IRComponent(const uint8_t sensor_id, const uint16_t rx_pin,
 		const uint16_t tx_pin, bool inverted_tx) :
 		irrecv(rx_pin), irsend(tx_pin, inverted_tx), AbstractComponent(
 				sensor_id) {
-	msgIrReceive = MyMessage(sensor_id, V_IR_RECEIVE);
-	msgIrSend = MyMessage(sensor_id, V_IR_SEND);
 	pinMode(tx_pin, OUTPUT);
 	pinMode(rx_pin, INPUT);
 	digitalWrite(tx_pin, inverted_tx ? HIGH : LOW);
@@ -22,8 +20,8 @@ IRComponent::~IRComponent() {
 	// TODO Auto-generated destructor stub
 }
 
-void IRComponent::presentation() {
-	present(sensor_id, S_IR, "IR");
+void IRComponent::presentation(MQTTClient* mqtt) {
+	AbstractComponent::presentation(mqtt);
 }
 
 void IRComponent::setup() {
@@ -33,7 +31,8 @@ void IRComponent::setup() {
 	Log.notice("Init done..."CR);
 }
 
-void IRComponent::receive(const MyMessage& message) {
+void IRComponent::receive(String topic, String data, bool cont) {
+	/*
 	if (message.sensor != sensor_id)
 		return;
 	switch (message.type) {
@@ -54,6 +53,7 @@ void IRComponent::receive(const MyMessage& message) {
 		irrecv.enableIRIn();
 		break;
 	}
+	*/
 }
 
 void IRComponent::loop() {
@@ -62,7 +62,7 @@ void IRComponent::loop() {
 		decode_type_t decodeType = (decode_type_t) ircode.decode_type;
 		this->receivedCode = ircode.value;
 		irrecv.resume();
-		send(msgIrSend.set(this->receivedCode));
+		mqtt->publish(makeTopic("out"),String(this->receivedCode));
 	}
 }
 

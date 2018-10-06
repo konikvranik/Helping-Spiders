@@ -10,8 +10,6 @@
 iLifeComponent::iLifeComponent(const uint8_t sensor_id, const uint16_t tx_pin,
 bool inverted_tx) :
 		irsend(tx_pin, inverted_tx), AbstractComponent(sensor_id) {
-	status_msg = MyMessage(sensor_id, V_STATUS);
-	ir_send_msg = MyMessage(sensor_id, V_IR_SEND);
 	pinMode(tx_pin, OUTPUT);
 	digitalWrite(tx_pin, inverted_tx ? HIGH : LOW);
 }
@@ -20,8 +18,8 @@ iLifeComponent::~iLifeComponent() {
 
 }
 
-void iLifeComponent::presentation() {
-	present(sensor_id, S_BINARY, "iLife vacuum cleaner");
+void iLifeComponent::presentation(MQTTClient* mqtt) {
+	AbstractComponent::presentation(mqtt);
 }
 
 static code* singleCode(int c) {
@@ -29,9 +27,9 @@ static code* singleCode(int c) {
 	return sq;
 }
 
-void iLifeComponent::receive(const MyMessage& message) {
-	if (message.sensor != sensor_id)
-		return;
+void iLifeComponent::receive(String topic, String data, bool cont) {
+	/*
+	String topicPrefix = makeTopic("");
 	if (pos < 0) {
 		switch (message.type) {
 		case V_STATUS:
@@ -104,6 +102,7 @@ void iLifeComponent::receive(const MyMessage& message) {
 			break;
 		}
 	}
+	*/
 }
 
 void iLifeComponent::setup() {
@@ -117,7 +116,7 @@ void iLifeComponent::loop() {
 		pos++;
 	}
 	if (pos >= len) {
-		send(status_msg.set(status));
+		mqtt->publish(makeTopic(""), String(""));
 		pos = -1;
 	}
 }

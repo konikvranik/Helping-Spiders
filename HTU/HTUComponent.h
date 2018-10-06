@@ -35,7 +35,7 @@ public:
 	virtual ~HTUComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void presentation();
+	virtual void presentation(MQTTClient* mqtt);
 	virtual float getHumidity();
 	virtual float getTemperature();
 	virtual void reportStatus(JsonObject&);

@@ -11,9 +11,6 @@ AbstractComponent *modules[] = {
 #ifdef ENABLE_OTA
 		new OTAComponent(NODE_ID, &http_server),
 #endif
-#ifdef ENABLE_BLYNK
-		new BlynkComponent(BLYNK_TOKEN, MY_ESP8266_SSID, MY_ESP8266_PASSWORD),
-#endif
 #ifdef ENABLE_RGB
 		new RGBComponent(RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
 #endif
@@ -33,7 +30,7 @@ AbstractComponent *modules[] = {
 		new DS18Component(TEMP_CHILD_ID, DS18_PIN),
 #endif
 #ifdef ENABLE_HCSR04
-		new HcSr04Component(DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
+		new HcSr04Component(String(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
 #endif
 	};
 

@@ -14,6 +14,9 @@
 #include <TimeLib.h>
 #include <WString.h>
 #include <string>
+#include <ESP8266WiFi.h>
+#include <WiFiMan.h>
+#include <ESP8266MQTTClient.h>
 
 #include "AbstractComponent.h"
 
@@ -22,11 +25,6 @@
 // Set this node's subscribe and publish topic prefix
 
 // Enable these if your MQTT broker requires usenrame/password
-
-
-#include <ESP8266WiFi.h>
-#include <WiFiMan.h>
-#include <ESP8266MQTTClient.h>
 
 #define DEBUG_ESP_PORT Serial
 
@@ -49,13 +47,13 @@
 #include "ht_sensor/DHTComponent.h"
 #endif
 #ifdef ENABLE_HTU
-#include "ht_sensor/HTUComponent.h"
+#include "../HTU/HTUComponent.h"
 #endif
 #ifdef ENABLE_DS18
-#include "ht_sensor/DS18Component.h"
+#include "../DS18/DS18.h"
 #endif
 #ifdef ENABLE_HCSR04
-#include "distance/HcSr04Component.h"
+#include "../HC-SR04/HC-SR04.h"
 #endif
 
 #endif

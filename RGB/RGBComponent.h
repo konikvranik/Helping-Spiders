@@ -10,11 +10,11 @@
 
 #include "../../lib/RGBLEDBlender/src/RGBLEDBlender.h"
 #include "../AbstractComponent.h"
-#include "Candle.h"
 #include <Arduino.h>
 #include <TimeLib.h>
 #include <math.h>
 #include <stdio.h>
+#include "../RGB/Candle.h"
 
 #define MODE_DEFAULT 0
 #define MODE_DAYTIME 1

@@ -8,11 +8,13 @@
 #ifndef STATUSCOMPONENT_H_
 #define STATUSCOMPONENT_H_
 
-#include "../AbstractComponent.h"
-#include "../ht_sensor/AbstractHumidityComponent.h"
-#include "../ht_sensor/AbstractTemperatureComponent.h"
+#include "AbstractComponent.h"
+#include "AbstractHumidityComponent.h"
+#include "AbstractTemperatureComponent.h"
+#include "AbstractDistanceComponent.h"
 #include <ESP8266WebServer.h>
 #include <NtpClientLib.h>
+#include <ArduinoLog.h>
 #include "Prometheus.h"
 
 #define LOG_PERIOD 5000 // ms

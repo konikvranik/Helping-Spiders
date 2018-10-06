@@ -29,7 +29,7 @@
 #define DEBUG_ESP_PORT Serial
 
 #ifdef ENABLE_OTA
-#include "ota/OTAComponent.h"
+#include "../OTA/OTAComponent.h"
 #endif
 #ifdef ENABLE_BLYNK
 #include "blynk/BlynkComponent.h"

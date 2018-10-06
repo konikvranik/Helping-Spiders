@@ -81,12 +81,13 @@ upload: $(MODULE)
 	@date
 .PHONY: upload
 
-modules: $(MODULES)
-	$(foreach dir,$^,$(MAKE) -C $(dir);)
+modules:
+	$(foreach dir,$(MODULES),$(MAKE) -C $(dir);)
 .PHONY: modules
 
-modulesclean: $(MODULES)
-	$(foreach dir,$^,$(MAKE) -C $(dir) clean;)
+modulesclean:
+	$(foreach dir,$(MODULES),$(MAKE) -C $(dir) clean;)
+	$(MAKE) clean
 .PHONY: modulesclean
 
 %.bin: %.elf

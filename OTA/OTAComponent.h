@@ -8,7 +8,6 @@
 #ifndef OTACOMPONENT_H_
 #define OTACOMPONENT_H_
 
-#include "AbstractComponent.h"
 #include <Arduino.h>
 #include <ArduinoOTA.h>
 #include <ESP8266HTTPUpdateServer.h>
@@ -16,6 +15,7 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiClient.h>
+#include "../src/AbstractComponent.h"
 
 class OTAComponent: public AbstractComponent {
 	ESP8266WebServer *_server;

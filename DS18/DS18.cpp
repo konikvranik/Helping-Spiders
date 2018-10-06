@@ -5,7 +5,7 @@
  *      Author: hpa
  */
 
-#include "DS18.h"
+#include "DS18Component.h"
 
 String DS18Component::addr2string(DeviceAddress deviceAddr) {
 	String result = "";

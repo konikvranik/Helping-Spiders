@@ -38,7 +38,7 @@ int module_count =
 		sizeof(modules) > 0 ? sizeof(modules) / sizeof(modules[0]) : 0;
 
 #ifdef ENABLE_STATUS
-#include "ui/StatusComponent.h"
+#include "../STATUS/StatusComponent.h"
 StatusComponent status_component(NODE_ID, modules, module_count, &http_server);
 #endif
 

@@ -64,7 +64,7 @@ $(BUILDDIR)/arduino.ar:	$(foreach E,$(OBJECTS),$(if $(findstring /cores/esp8266/
 .PRECIOUS: $(OBJECTS) %.elf
 
 clean:
-	-$(RMDIR) $(BUILDDIR)/src $(BUILDDIR)/image.* $(BUILDDIR)/artuino.ar $(addprefix $(BUILDDIR)/,$(MODULES))
+	-$(RMDIR) $(BUILDDIR)/src $(BUILDDIR)/image.* $(BUILDDIR)/arduino.ar $(addprefix $(BUILDDIR)/,$(MODULES))
 
 distclean:
 	-$(RMDIR) $(BUILDDIR) 

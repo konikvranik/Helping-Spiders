@@ -8,42 +8,43 @@ LIBRARIES =	\
 	${CORE_PATH}/RGBLEDBlender/src \
 
 ARDUINO_LIBRARIES = \
-	IRremoteESP8266/2.0.3 \
-	DHT_sensor_library/1.3.0 \
 	ArduinoLog/1.0.1 \
-	esp8266_mdns/1.1.6 \
-	Adafruit_Unified_Sensor/1.0.2 \
 	NtpClientLib/2.0.5 \
 	Time/1.5.0 \
-	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \
-	Adafruit_HTU21DF_Library/1.0.1 \
-	Sodaq_SHT2x/1.2.0 \
-	ArduinoJson/5.9.0 \
-	OneWire/2.3.4 \
-	DallasTemperature/3.8.0 \
-	Ultrasonic_hc_sr04/0.4.0 \
-	ESP8266MQTTClient/1.0.5 \
 	WiFiMan/1.0.7 \
+	ArduinoJson/5.9.0 \
 	ESP8266OTA/1.0.1 \
+	ESP8266MQTTClient/1.0.5 \
+#	IRremoteESP8266/2.0.3 \
+#	DHT_sensor_library/1.3.0 \
+#	esp8266_mdns/1.1.6 \
+#	Adafruit_Unified_Sensor/1.0.2 \
+#	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \
+#	Adafruit_HTU21DF_Library/1.0.1 \
+#	Sodaq_SHT2x/1.2.0 \
+#	OneWire/2.3.4 \
+#	DallasTemperature/3.8.0 \
+#	Ultrasonic_hc_sr04/0.4.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \
-	libraries/ESP8266httpUpdate/src \
-	libraries/Ethernet/src \
+	variants/generic \
+	libraries/ESP8266WiFi/src \
+	libraries/ESP8266WebServer/src \
+	libraries/Hash/src \
+	libraries/SPI \
+	libraries/ArduinoOTA \
 	libraries/ESP8266HTTPUpdateServer/src \
 	libraries/DNSServer/src \
-	libraries/ESP8266WiFi/src \
-	libraries/esp8266/src \
-	libraries/EEPROM \
 	libraries/ESP8266mDNS \
-	libraries/ESP8266HTTPClient/src \
-	libraries/ESP8266WebServer/src \
-	libraries/ArduinoOTA \
-	libraries/SPI \
-	libraries/Wire \
-	libraries/Hash/src \
 	cores/esp8266 \
-	variants/generic \
+
+#	libraries/ESP8266HTTPClient/src \
+#	libraries/EEPROM \
+#	libraries/Ethernet/src \
+#	libraries/esp8266/src \
+#	libraries/ESP8266httpUpdate/src \
+#	libraries/Wire \
 
 #########################################################
 
@@ -61,7 +62,7 @@ $(BUILDDIR)/arduino.ar:	$(foreach E,$(OBJECTS),$(if $(findstring /cores/esp8266/
 .PRECIOUS: $(OBJECTS) %.elf
 
 clean:
-	-$(RMDIR) $(BUILDDIR)/src $(BUILDDIR)/image.* 
+	-$(RMDIR) $(BUILDDIR)/src $(BUILDDIR)/image.* $(BUILDDIR)/artuino.ar
 
 distclean:
 	-$(RMDIR) $(BUILDDIR) 

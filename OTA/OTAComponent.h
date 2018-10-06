@@ -9,12 +9,15 @@
 #define OTACOMPONENT_H_
 
 #include <Arduino.h>
-#include <ArduinoOTA.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <ESP8266WebServer.h>
+
+#include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiClient.h>
+
+#include <ArduinoLog.h>
 #include "../src/AbstractComponent.h"
 
 class OTAComponent: public AbstractComponent {

@@ -6,8 +6,6 @@
  */
 
 #include "OTAComponent.h"
-
-#include <ArduinoLog.h>
 //#include <WString.h>
 //#include <unordered_map>
 

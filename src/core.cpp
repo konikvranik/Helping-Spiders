@@ -156,12 +156,6 @@ void loop() {
 	// Send locally attach sensors data here
 	Log.verbose("loop start" CR);
 	for (int i = 0; i < module_count; i++) {
-#ifdef ENABLE_OTA
-		if(static_cast<OTAComponent*>(modules[0])->isUpdating()) {
-			ArduinoOTA.handle();
-			break;
-		}
-#endif
 		Log.verbose(
 				("Processing module " + modules[i]->moduleName() + CR).c_str());
 		modules[i]->loop();

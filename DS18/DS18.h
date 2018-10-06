@@ -8,11 +8,11 @@
 #ifndef SRC_HT_SENSOR_DS18COMPONENT_H_
 #define SRC_HT_SENSOR_DS18COMPONENT_H_
 
-#include "../AbstractComponent.h"
-#include "AbstractTemperatureComponent.h"
 #include <DallasTemperature.h>
 #include <OneWire.h>
-#include "../ui/Prometheus.h"
+#include "../src/AbstractTemperatureComponent.h"
+#include "../src/AbstractTemperatureComponent.h"
+#include "../src/Prometheus.h"
 
 #define DS18_DELAY 30000
 #define MAX_DEVICES 255
@@ -32,7 +32,7 @@ class DS18Component : public AbstractComponent,
   OneWire *_wire;
 
 public:
-  DS18Component(const uint8_t, const int16_t);
+  DS18Component(String nodeid, const uint8_t, const int16_t);
   virtual ~DS18Component();
   virtual void setup();
   virtual void loop();

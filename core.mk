@@ -15,6 +15,9 @@ ARDUINO_LIBRARIES = \
 	ArduinoJson/5.9.0 \
 	ESP8266OTA/1.0.1 \
 	ESP8266MQTTClient/1.0.5 \
+	OneWire/2.3.4 \
+	DallasTemperature/3.8.0 \
+	Ultrasonic_hc_sr04/0.4.0 \
 #	IRremoteESP8266/2.0.3 \
 #	DHT_sensor_library/1.3.0 \
 #	esp8266_mdns/1.1.6 \
@@ -22,9 +25,6 @@ ARDUINO_LIBRARIES = \
 #	SparkFun_HTU21D_Humidity_and_Temperature_Sensor_Breakout/1.1.3 \
 #	Adafruit_HTU21DF_Library/1.0.1 \
 #	Sodaq_SHT2x/1.2.0 \
-#	OneWire/2.3.4 \
-#	DallasTemperature/3.8.0 \
-#	Ultrasonic_hc_sr04/0.4.0 \
 #	I2C-Sensor-Lib_iLib/0.8.2 \
 
 ARDUINO_CORE = \
@@ -54,7 +54,9 @@ DEFAULT: $(BIN)
 
 all: $(BIN)
 
-include shared.mk
+$(BUILDDIR)/src/core.cpp.o: modules */*.o
+
+include $(CORE_PATH)/shared.mk
 
 $(BUILDDIR)/arduino.ar:	$(foreach E,$(OBJECTS),$(if $(findstring /cores/esp8266/,$E),$E))
 	$(AR) cru  "$(BUILDDIR)/arduino.ar" $^
@@ -97,4 +99,4 @@ modulesclean:
 export
 %.elf: $(foreach E,$(OBJECTS),$(if $(findstring /cores/esp8266/,$E),,$E)) $(BUILDDIR)/arduino.ar
 	$(MAKE) modules
-	$(CC) $(LDFLAGS) -o "$@" -Wl,--start-group $^ $(addsuffix /*.o,$(MODULES)) -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++ -Wl,--end-group  "-L."
+	$(CC) $(LDFLAGS) -o "$@" -Wl,--start-group $^ -lm -lgcc -lhal -lphy -lpp -lnet80211 -lwpa -lcrypto -lmain -lwps -laxtls -lsmartconfig -lmesh -lwpa2 -llwip_gcc -lstdc++ -Wl,--end-group  "-L."

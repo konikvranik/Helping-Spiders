@@ -4,7 +4,6 @@
 #define ARDUINO 100
 #define CR "\r\n"
 
-#include "config.h"
 #include <Arduino.h>
 #include <ArduinoLog.h>
 #include <ESP8266WebServer.h>

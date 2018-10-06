@@ -7,7 +7,8 @@ MQTTClient mqtt;
 WiFiMan wman = WiFiMan();
 Config conf;
 
-AbstractComponent *modules[] = {
+AbstractComponent *modules[] =
+		{
 #ifdef ENABLE_OTA
 		new OTAComponent(NODE_ID, &http_server),
 #endif
@@ -27,7 +28,7 @@ AbstractComponent *modules[] = {
 		new HTUComponent(TEMP_CHILD_ID, HUM_CHILD_ID, HTU_SCL, HTU_SDA),
 #endif
 #ifdef ENABLE_DS18
-		new DS18Component(TEMP_CHILD_ID, DS18_PIN),
+		new DS18Component(NODE_ID, TEMP_CHILD_ID, DS18_PIN),
 #endif
 #ifdef ENABLE_HCSR04
 		new HcSr04Component(String(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),

@@ -5,7 +5,7 @@
  *      Author: hpa
  */
 
-#include "DS18Component.h"
+#include "DS18.h"
 
 String DS18Component::addr2string(DeviceAddress deviceAddr) {
 	String result = "";
@@ -30,8 +30,8 @@ bool DS18Component::deviceIsReady() {
 	}
 }
 
-DS18Component::DS18Component(const uint8_t sensor_id, const int16_t pin) :
-		AbstractComponent(sensor_id) {
+DS18Component::DS18Component(String node_id, const uint8_t sensor_id, const int16_t pin) :
+		AbstractComponent(node_id, sensor_id) {
 	for (int i = 0; i < MAX_DEVICES; i++)
 		this->temps[i] = -127;
 	pinMode(pin, INPUT);

@@ -25,8 +25,8 @@
 
 // Enable these if your MQTT broker requires usenrame/password
 
-//#define DEBUG_ESP_PORT Serial
-#define DISABLE_LOGGING
+#define DEBUG_ESP_PORT Serial
+//#define DISABLE_LOGGING
 
 #ifdef ENABLE_OTA
 #include "../OTA/OTAComponent.h"

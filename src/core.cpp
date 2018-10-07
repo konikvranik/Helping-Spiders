@@ -115,8 +115,8 @@ void setup() {
 	}
 #ifndef DISABLE_LOGGING
 	DEBUG_ESP_PORT.begin(115200);
-#endif
 	Log.begin(LOG_LEVEL_TRACE, &DEBUG_ESP_PORT);
+#endif
 	Log.notice(
 			(CR "starting with " + String(module_count) + " modules..." CR).c_str());
 

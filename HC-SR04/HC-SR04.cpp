@@ -14,14 +14,7 @@ HcSr04Component::HcSr04Component(String node_id, const uint8_t sensor_id, const 
 	this->sensor = Ultrasonic(trigPin, echoPin);
 }
 
-HcSr04Component::~HcSr04Component() {
-	// TODO Auto-generated destructor stub
-}
-
 void HcSr04Component::setup() {
-	pinMode(OUTPUT, FUNCTION_3);
-	pinMode(INPUT, FUNCTION_3);
-	// Set delay between sensor readings based on sensor details.
 	pinMode(trigPin, OUTPUT);
 	pinMode(echoPin, INPUT);
 }

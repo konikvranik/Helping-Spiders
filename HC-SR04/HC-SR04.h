@@ -21,7 +21,6 @@ class HcSr04Component: public AbstractComponent,
 public:
 	Ultrasonic sensor;
 	HcSr04Component(String, const uint8_t, const int16_t, const int16_t);
-	virtual ~HcSr04Component();
 	virtual void setup();
 	virtual void loop();
 	virtual void presentation(MQTTClient mqtt);

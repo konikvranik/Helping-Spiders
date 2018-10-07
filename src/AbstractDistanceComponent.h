@@ -10,11 +10,8 @@
 
 #include "AbstractComponent.h"
 
-class AbstractDistanceComponent: public AbstractComponent {
+class AbstractDistanceComponent {
 public:
-	AbstractDistanceComponent(const String node_id, const uint8_t sensor_id) :
-			AbstractComponent(node_id, sensor_id) {
-	}
 	virtual float getDistance();
 	virtual String getType() {
 		return "distance";

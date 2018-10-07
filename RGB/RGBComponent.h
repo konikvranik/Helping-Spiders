@@ -8,13 +8,13 @@
 #ifndef RGBCOMPONENT_H_
 #define RGBCOMPONENT_H_
 
-#include "../../lib/RGBLEDBlender/src/RGBLEDBlender.h"
-#include "../AbstractComponent.h"
+#include "RGBLEDBlender/src/RGBLEDBlender.h"
+#include "../src/AbstractComponent.h"
 #include <Arduino.h>
 #include <TimeLib.h>
 #include <math.h>
 #include <stdio.h>
-#include "../RGB/Candle.h"
+#include "Candle.h"
 
 #define MODE_DEFAULT 0
 #define MODE_DAYTIME 1

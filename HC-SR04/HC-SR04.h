@@ -12,7 +12,8 @@
 #include "../src/AbstractDistanceComponent.h"
 #include "../src/Prometheus.h"
 
-class HcSr04Component: public AbstractDistanceComponent {
+class HcSr04Component: public AbstractComponent,
+		public AbstractDistanceComponent {
 	float distance = 0;
 	uint32_t delayMS = 2000, lastRun = 0;
 	int16_t trigPin = 0, echoPin = 0;

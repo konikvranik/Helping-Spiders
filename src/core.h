@@ -6,6 +6,7 @@
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
+#include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include <Esp.h>
 #include <HardwareSerial.h>
@@ -14,7 +15,6 @@
 #include <WString.h>
 #include <string>
 #include <ESP8266WiFi.h>
-#include <WiFiMan.h>
 #include <ESP8266MQTTClient.h>
 
 #include "AbstractComponent.h"
@@ -25,13 +25,11 @@
 
 // Enable these if your MQTT broker requires usenrame/password
 
-#define DEBUG_ESP_PORT Serial
+//#define DEBUG_ESP_PORT Serial
+#define DISABLE_LOGGING
 
 #ifdef ENABLE_OTA
 #include "../OTA/OTAComponent.h"
-#endif
-#ifdef ENABLE_BLYNK
-#include "blynk/BlynkComponent.h"
 #endif
 #ifdef ENABLE_RGB
 #include "rgb/RGBComponent.h"
@@ -51,7 +49,7 @@
 #ifdef ENABLE_DS18
 #include "../DS18/DS18.h"
 #endif
-#ifdef ENABLE_HCSR04
+#ifdef ENABLE_HC-SR04
 #include "../HC-SR04/HC-SR04.h"
 #endif
 

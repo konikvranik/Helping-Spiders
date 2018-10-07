@@ -4,8 +4,6 @@ ADC_MODE(ADC_VCC);
 
 ESP8266WebServer http_server(80);
 MQTTClient mqtt;
-WiFiMan wman = WiFiMan();
-Config conf;
 
 AbstractComponent *modules[] =
 		{
@@ -30,7 +28,7 @@ AbstractComponent *modules[] =
 #ifdef ENABLE_DS18
 		new DS18Component(NODE_ID, TEMP_CHILD_ID, DS18_PIN),
 #endif
-#ifdef ENABLE_HCSR04
+#ifdef ENABLE_HC-SR04
 		new HcSr04Component(String(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
 #endif
 	};
@@ -111,8 +109,10 @@ void setup() {
 #ifdef INIT_STUFF
 	INIT_STUFF
 #endif
-	wman.start();
-	wman.getConfig(&conf);
+	WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+	while (WiFi.status() != WL_CONNECTED) {
+		delay(500);
+	}
 #ifndef DISABLE_LOGGING
 	DEBUG_ESP_PORT.begin(115200);
 #endif

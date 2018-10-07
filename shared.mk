@@ -43,7 +43,7 @@ SOURCES := $(addprefix $(ARDUINO_CDT)/$(PLATFORM_PATH),$(ARDUINO_CORE)) \
 	$(LIBS) \
 	$(LIBRARIES) \
 	$(CORE_PATH)/src \
-	$(MODULES) \
+	$(addprefix $(CORE_PATH)/,$(MODULES)) \
 
 CYGPATH=cygpath -m
 SRC = $(shell find $(SOURCES) \( -name '*.c' -o -name '*.cpp' -o -name '*.S' \))
@@ -51,6 +51,9 @@ SRC = $(shell find $(SOURCES) \( -name '*.c' -o -name '*.cpp' -o -name '*.S' \))
 INC = $(foreach d,$(SOURCES), -I'$(if $(findstring cygwin, $(SYS)),$(shell $(CYGPATH) $d),$d)')
 
 OBJECTS = $(addprefix $(BUILDDIR)/,$(foreach E,$(SRC:%=%.o),$(if $(findstring MySensors,$E),,$E)))
+
+#$(info $$OBJECTS: [${OBJECTS}])
+#$(info $$)
 
 TOOLS_PATH=${ARDUINO_CDT}/packages/esp8266/tools
 XTENSA_PATH = ${TOOLS_PATH}/xtensa-lx106-elf-gcc/1.20.0-26-gb404fb9-2/bin

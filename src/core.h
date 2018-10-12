@@ -1,8 +1,8 @@
 #ifndef INIT_INCLUDE_h
 #define INIT_INCLUDE_h
 
-#define ARDUINO 100
-#define CR "\r\n"
+//#define ARDUINO 100
+//#define CR "\r\n"
 
 #include <Arduino.h>
 #include <ArduinoLog.h>
@@ -15,12 +15,11 @@
 #include <WString.h>
 #include <string>
 #include <ESP8266WiFi.h>
-#include <ESP8266MQTTClient.h>
+#include <WiFiMan.h>
 
 #include "AbstractComponent.h"
 
-#define EXPAND(N) QUOTE(N)
-#define QUOTE(NODE_ID) #NODE_ID
+#define STRING(s) #s
 // Set this node's subscribe and publish topic prefix
 
 // Enable these if your MQTT broker requires usenrame/password
@@ -28,29 +27,58 @@
 #define DEBUG_ESP_PORT Serial
 //#define DISABLE_LOGGING
 
-#ifdef ENABLE_OTA
-#include "../OTA/OTAComponent.h"
-#endif
+#include <StatusComponent.h>
+#include <OTAComponent.h>
+
 #ifdef ENABLE_RGB
-#include "rgb/RGBComponent.h"
+#include "RGBComponent.h"
 #endif
 #ifdef ENABLE_IR
-#include "ir/IRComponent.h"
+#include "IRComponent.h"
 #endif
 #ifdef ENABLE_ILIFE
-#include "ir/iLifeComponent.h"
+#include "iLifeComponent.h"
 #endif
 #ifdef ENABLE_DHT
-#include "ht_sensor/DHTComponent.h"
+#include "DHTComponent.h"
 #endif
 #ifdef ENABLE_HTU
-#include "../HTU/HTUComponent.h"
+#include "HTUComponent.h"
 #endif
 #ifdef ENABLE_DS18
-#include "../DS18/DS18.h"
+#include "DS18.h"
 #endif
-#ifdef ENABLE_HC-SR04
-#include "../HC-SR04/HC-SR04.h"
+#ifdef ENABLE_HCSR04
+#include "HCSR04.h"
 #endif
+
+ESP8266WebServer http_server(80);
+WiFiMan wman;
+
+AbstractComponent *modules[] =
+    {
+        new OTAComponent(STRING(NODE_ID), &http_server),
+#ifdef ENABLE_RGB
+        new RGBComponent(RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
+#endif
+#ifdef ENABLE_IR
+        new IRComponent(IR_CHILD_ID, IRRX_PIN, IRTX_PIN),
+#endif
+#ifdef ENABLE_ILIFE
+        new iLifeComponent(ILIFE_CHILD_ID, IRTX_PIN),
+#endif
+#ifdef ENABLE_DHT
+        new DHTComponent(TEMP_CHILD_ID, HUM_CHILD_ID, DHT_PIN),
+#endif
+#ifdef ENABLE_HTU
+        new HTUComponent(TEMP_CHILD_ID, HUM_CHILD_ID, HTU_SCL, HTU_SDA),
+#endif
+#ifdef ENABLE_DS18
+        new DS18Component(STRING(NODE_ID), TEMP_CHILD_ID, DS18_PIN),
+#endif
+#ifdef ENABLE_HCSR04
+        new HcSr04Component(STRING(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
+#endif
+};
 
 #endif

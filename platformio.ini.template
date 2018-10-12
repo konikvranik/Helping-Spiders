@@ -1,0 +1,47 @@
+; PlatformIO Project Configuration File
+;
+;   Build options: build flags, source filter
+;   Upload options: custom upload port, speed and extra flags
+;   Library options: dependencies, extra library storages
+;   Advanced options: extra scripting
+;
+; Please visit documentation for the other options and examples
+; http://docs.platformio.org/page/projectconf.html
+[platformio]
+env_default = wemos
+
+[common_env_data]
+build_flags =
+    -D WIFI_SSID=
+    -D WIFI_PASSWORD=
+
+[env:esp01]
+platform = espressif8266
+board = esp01_1m
+framework = arduino
+build_flags =
+    ${common_env_data.build_flags}
+    -D SV="2.0"
+    -D SN="test"
+    -D NODE_ID="ESP01"
+
+[env:wemos]
+platform = espressif8266
+board = d1
+framework = arduino
+;targets = debug
+build_flags =
+    ${common_env_data.build_flags}
+    -D SV="2.0"
+    -D SN="test"
+    -D NODE_ID="ESP02"
+    -D TEMP_CHILD_ID=2
+    -D DS18_PIN=4
+    -D HCSR04_TRIG_PIN=13
+    -D HCSR04_ECHO_PIN=14
+    -D DIST_CHILD_ID=1
+    -D ENABLE_DS18
+    -D ENABLE_HCSR04
+ 
+ 
+ #   -D DISABLE_LOGGING

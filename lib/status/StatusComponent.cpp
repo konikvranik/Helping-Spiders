@@ -139,7 +139,7 @@ void StatusComponent::jsonSuffix(JsonObject &p)
 	p["Boot mode"] = ESP.getBootMode();
 	p["Cycle count"] = ESP.getCycleCount();
 	p["CPU freq"] = ESP.getCpuFreqMHz();
-	p["VCC"] = ESP.getVcc() / 1000;
+	p["VCC"] = ESP.getVcc() / 1000.000;
 	p["Loops"] = lps < 0 ? "UNKNOWN" : String(lps);
 #ifdef DEVELOPMENT
 	p["development"] = true;
@@ -217,7 +217,7 @@ String StatusComponent::prometheusReport()
 					   "ESP CPU frequency in MHz");
 	result += p->to_string(true);
 	delete p;
-	p = new Prometheus("esp_power_supply", ESP.getVcc(), "gauge",
+	p = new Prometheus("esp_power_supply", ESP.getVcc()/1000.000, "gauge",
 					   "ESP voltage in V");
 	p->attribute("unit", "V");
 	p->attribute("type", "voltage");

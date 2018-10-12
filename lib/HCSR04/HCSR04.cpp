@@ -22,7 +22,7 @@ void HcSr04Component::setup() {
 void HcSr04Component::loop() {
 	if (lastRun == 0 || lastRun + delayMS < millis()) {
 		double old_distance = this->distance;
-		float tmp = this->sensor->Ranging(CM);
+		float tmp = this->sensor->distanceRead(CM);
 		lastRun = millis();
 		if (tmp > 0) {
 			this->distance = tmp;

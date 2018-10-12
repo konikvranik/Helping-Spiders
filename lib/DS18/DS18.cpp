@@ -46,7 +46,7 @@ void DS18Component::loop()
 {
 }
 
-void DS18Component::readTemps()
+void DS18Component::readTemps(JsonArray &jo)
 {
 	if (0 < lastRun && lastRun < millis() - delayMS)
 		return;
@@ -59,13 +59,14 @@ void DS18Component::readTemps()
 
 	while (_wire->search(deviceAddress))
 	{
+		JsonObject &t = jo.createNestedObject();
+		t["parasite"] = String(this->sensor.isParasitePowerMode());
 		if (this->sensor.validAddress(deviceAddress))
 		{
 			if (this->sensor.validFamily(deviceAddress))
 			{
-				JsonObject &t = tempBuffer.createNestedObject();
-				t["parasite"] = String(this->sensor.isParasitePowerMode());
 				t["address"] = addr2string(deviceAddress);
+				this->sensor.requestTemperaturesByAddress(deviceAddress);
 				float tempC = this->sensor.getTempC(deviceAddress);
 				t["value"] =
 					tempC == DEVICE_DISCONNECTED_C ? "N/A" : String(tempC);
@@ -88,22 +89,22 @@ float DS18Component::getTemperature()
 
 void DS18Component::reportStatus(JsonObject &jo)
 {
-	readTemps();
 	jo["ID"] = this->sensor_id;
+	JsonArray &devices = jo.createNestedArray("devices");
+	readTemps(devices);
 	JsonObject &params = jo.createNestedObject("params");
 	params["parasite"] = this->sensor.isParasitePowerMode();
 	params["count"] = this->sensor.getDeviceCount();
 	params["DS18count"] = this->sensor.getDS18Count();
 	params["complete"] = this->sensor.isConversionComplete();
-	jo.set("devices", tempBuffer);
 }
 
 String DS18Component::prometheus()
 {
 	String s = "";
 	Prometheus *p;
-
-	readTemps();
+	JsonArray &arr = tempBuffer.createNestedArray();
+	readTemps(arr);
 
 	for (auto d : tempBuffer)
 	{

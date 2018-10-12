@@ -82,3 +82,5 @@ AbstractComponent *modules[] =
 };
 
 #endif
+
+#include <IonDB.h>

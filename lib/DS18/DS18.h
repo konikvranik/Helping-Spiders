@@ -16,19 +16,19 @@
 #include <AbstractTemperatureComponent.h>
 #include <Prometheus.h>
 
-#define DS18_DELAY 30000
+#define DS18_DELAY 10000
 #define MAX_DEVICES 255
 
 class DS18Component: public AbstractComponent,
 		public AbstractTemperatureComponent {
-	uint32_t delayMS = 2000, lastRun = 0;
+	uint32_t delayMS = 10000, lastRun = 0;
 	int16_t pin;
 	DallasTemperature sensor;
 	String addr2string(DeviceAddress deviceAddr);
 	String scratchpad2string(uint8_t *deviceAddr);
 	StaticJsonBuffer<1000> jsonBuff;
 	JsonArray &tempBuffer = jsonBuff.createArray();
-	void readTemps();
+	void readTemps(JsonArray &jo);
 	OneWire *_wire;
 	struct device {
 	  int weight;

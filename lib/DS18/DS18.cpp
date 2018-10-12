@@ -24,13 +24,10 @@ String DS18Component::addr2string(DeviceAddress deviceAddr)
 DS18Component::DS18Component(String node_id, const uint8_t sensor_id,
 							 const int16_t pin) : AbstractComponent(node_id, sensor_id)
 {
-	pinMode(pin, INPUT);
-	pinMode(this->pin, INPUT);
-	this->_wire = new OneWire(this->pin);
 	this->pin = pin;
+	this->_wire = new OneWire(this->pin);
 	this->sensor = DallasTemperature();
 	this->sensor.setOneWire(this->_wire);
-	this->sensor.begin();
 }
 
 DS18Component::~DS18Component()
@@ -40,6 +37,7 @@ DS18Component::~DS18Component()
 
 void DS18Component::setup()
 {
+	this->sensor.begin();
 }
 
 void DS18Component::loop()
@@ -48,33 +46,24 @@ void DS18Component::loop()
 
 void DS18Component::readTemps(JsonArray &jo)
 {
-	if (0 < lastRun && lastRun < millis() - delayMS)
-		return;
-
-	this->sensor.begin();
-
-	DeviceAddress deviceAddress;
-
-	_wire->reset_search();
-
-	while (_wire->search(deviceAddress))
+	if (!(0 < lastRun && lastRun < millis() - delayMS))
+		this->sensor.requestTemperatures();
+	for (int i = 0; i < this->sensor.getDeviceCount(); i++)
 	{
-		JsonObject &t = jo.createNestedObject();
-		t["parasite"] = String(this->sensor.isParasitePowerMode());
-		if (this->sensor.validAddress(deviceAddress))
+		DeviceAddress addr;
+		this->sensor.getAddress(addr, i);
+		if (this->sensor.validFamily(addr))
 		{
-			if (this->sensor.validFamily(deviceAddress))
-			{
-				t["address"] = addr2string(deviceAddress);
-				this->sensor.requestTemperaturesByAddress(deviceAddress);
-				float tempC = this->sensor.getTempC(deviceAddress);
-				t["value"] =
-					tempC == DEVICE_DISCONNECTED_C ? "N/A" : String(tempC);
-				t["resolution"] = String(
-					this->sensor.getResolution(deviceAddress));
-				t["type"] = "temperature";
-				t["unit"] = "°C";
-			}
+			JsonObject &t = jo.createNestedObject();
+			t["address"] = addr2string(addr);
+			//this->sensor.requestTemperaturesByAddress(devices[i]);
+			float tempC = this->sensor.getTempC(addr);
+			t["value"] =
+				tempC == DEVICE_DISCONNECTED_C ? "N/A" : String(tempC);
+			t["resolution"] = String(
+				this->sensor.getResolution(addr));
+			t["type"] = "temperature";
+			t["unit"] = "°C";
 		}
 	}
 
@@ -90,23 +79,23 @@ float DS18Component::getTemperature()
 void DS18Component::reportStatus(JsonObject &jo)
 {
 	jo["ID"] = this->sensor_id;
-	JsonArray &devices = jo.createNestedArray("devices");
-	readTemps(devices);
 	JsonObject &params = jo.createNestedObject("params");
 	params["parasite"] = this->sensor.isParasitePowerMode();
 	params["count"] = this->sensor.getDeviceCount();
 	params["DS18count"] = this->sensor.getDS18Count();
 	params["complete"] = this->sensor.isConversionComplete();
+	params["resolution"] = this->sensor.getResolution();
+	readTemps(jo.createNestedArray("devices"));
 }
 
 String DS18Component::prometheus()
 {
 	String s = "";
 	Prometheus *p;
-	JsonArray &arr = tempBuffer.createNestedArray();
+	StaticJsonBuffer<1000> jsonBuff;
+	JsonArray &arr = jsonBuff.createArray();
 	readTemps(arr);
-
-	for (auto d : tempBuffer)
+	for (auto d : arr)
 	{
 		if (d["value"] == "N/A")
 			continue;

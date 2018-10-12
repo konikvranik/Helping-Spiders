@@ -17,7 +17,7 @@
 class HcSr04Component: public AbstractComponent,
 		public AbstractDistanceComponent {
 	float distance = -1;
-	uint32_t delayMS = 10000, lastRun = 0;
+	uint32_t delayMS = 2000, lastRun = 0;
 	int16_t trigPin = 0, echoPin = 0;
 	Ultrasonic* sensor;
 

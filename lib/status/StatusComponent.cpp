@@ -36,8 +36,6 @@ StatusComponent::~StatusComponent()
 
 void StatusComponent::setup()
 {
-	Log.trace(
-		("Status initializing with " + String(components_count) + " components" CR).c_str());
 	if (webServer != NULL)
 	{
 		webServer->on("/status.json", HTTP_GET, [&]() {
@@ -148,9 +146,6 @@ void StatusComponent::loop()
 	if (last_log + LOG_PERIOD < now)
 	{
 		lps = loop_count * 1000 / (now - last_log);
-		Log.notice("Loops/s: %d" CR, lps);
-		Log.trace("Time:   %s %s Time." CR, NTP.getTimeDateString().c_str(),
-				  (NTP.isSummerTime() ? " Summer" : " Winter"));
 		loop_count = 0;
 		last_log = now;
 	}

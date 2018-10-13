@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <HardwareSerial.h>
 #include <ESP8266WiFi.h>
-#include <ArduinoLog.h>
 #include <Esp.h>
 #include <ESP8266WebServer.h>
 #include <TimeLib.h>
@@ -15,10 +14,8 @@
 
 #include "AbstractComponent.h"
 
-// #define STRING(s) str(s)
-// #define str(s) #s
-#define xstr(s) str(s)
-#define str(s) #s
+#define str(s) xstr(s)
+#define xstr(s) #s
 
 // Set this node's subscribe and publish topic prefix
 

@@ -10,8 +10,8 @@
 
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
+#include <WiFiUdp.h>
 #include <NtpClientLib.h>
-#include <ArduinoLog.h>
 #include "AbstractComponent.h"
 #include "AbstractHumidityComponent.h"
 #include "AbstractTemperatureComponent.h"
@@ -35,7 +35,7 @@ class StatusComponent: public AbstractComponent {
 	void jsonPrefix(JsonObject &);
 	void jsonSuffix(JsonObject &);
 
-public:
+  public:
 	float lps = -1;
 	StatusComponent(String, AbstractComponent *[], uint8_t, Print *);
 	StatusComponent(String, AbstractComponent *[], uint8_t, ESP8266WebServer *);

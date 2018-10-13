@@ -11,7 +11,6 @@
 #include "AbstractComponent.h"
 #include "AbstractHumidityComponent.h"
 #include "AbstractTemperatureComponent.h"
-#include <ArduinoLog.h>
 #include "dht.h"
 #include "Prometheus.h"
 

@@ -10,7 +10,6 @@
 
 #include <DallasTemperature.h>
 #include <OneWire.h>
-#include <ArduinoLog.h>
 #include <ArduinoJson.h>
 #include <AbstractTemperatureComponent.h>
 #include <AbstractTemperatureComponent.h>

@@ -11,22 +11,21 @@
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
-
 #include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266mDNS.h>
 #include <WiFiClient.h>
-
-#include <ArduinoLog.h>
+#include "common.h"
 #include "AbstractComponent.h"
 
-class OTAComponent: public AbstractComponent {
+class OTAComponent : public AbstractComponent
+{
 	ESP8266WebServer *_server;
 	ESP8266HTTPUpdateServer httpUpdater;
 	String nodeId;
 	boolean updating = false;
 
-public:
+  public:
 	OTAComponent(const String, ESP8266WebServer *);
 	virtual ~OTAComponent();
 	virtual void setup();

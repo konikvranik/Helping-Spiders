@@ -34,7 +34,6 @@ void HcSr04Component::loop()
 			{
 				const String topic = this->makeTopic("");
 				const String value = String(this->getDistance());
-				Log.trace("topic: %s, value: %s", topic.c_str(), value.c_str());
 			}
 		}
 	}

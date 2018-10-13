@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """ESP Exception Decoder
 
@@ -161,7 +161,7 @@ class AddressResolver(object):
         if sys.version_info[0] < 3:
             output = subprocess.check_output(cmd)
         else:
-            output = subprocess.check_output(cmd, encoding="utf-8")
+            output = subprocess.check_output(cmd, encoding="UTF-8")
 
         line_regex = re.compile("^(?P<addr>[0-9a-fx]+): (?P<result>.+)$")
 

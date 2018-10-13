@@ -21,10 +21,8 @@ IRComponent::~IRComponent() {
 }
 
 void IRComponent::setup() {
-	Log.notice("Recall EEPROM settings"CR);
 	// Start the ir receiver
 	irrecv.enableIRIn();
-	Log.notice("Init done..."CR);
 }
 
 void IRComponent::receive(String topic, String data, bool cont) {

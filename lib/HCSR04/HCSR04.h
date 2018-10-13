@@ -10,7 +10,6 @@
 
 #include <Arduino.h>
 #include <Ultrasonic.h>
-#include <ArduinoLog.h>
 #include "AbstractDistanceComponent.h"
 #include "Prometheus.h"
 

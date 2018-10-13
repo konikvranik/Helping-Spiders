@@ -7,7 +7,10 @@
         "vector": "cpp",
         "initializer_list": "cpp",
         "list": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "cmath": "cpp",
+        "cstdint": "cpp",
+        "typeinfo": "cpp"
     },
     "terminal.integrated.env.linux": {
         "PATH": "/home/hpa/.platformio/penv/bin:/home/hpa/.platformio/penv:/home/hpa/scripts:/opt/bin:/usr/local/bin:/usr/local/sbin:/home/hpa/.cxoffice/bin:/usr/local/bin:/home/hpa/home/petrv/Documents/Empire/docbook/bin:/home/petrv/Documents/Empire/docbook/fop:/home/hpa/.wine/bin:/cygdrive/d/Programs/fop-1.1:/home/hpa/bin:/home/hpa/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/jvm/java-10-oracle/bin:/usr/lib/jvm/java-10-oracle/db/bin:/home/hpa/.composer/vendor/bin",

@@ -7,3 +7,4 @@ CMakeListsPrivate.txt
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 platformio.ini
+tools/decoder.pyc

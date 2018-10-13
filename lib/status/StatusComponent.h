@@ -16,6 +16,7 @@
 #include "AbstractTemperatureComponent.h"
 #include "AbstractDistanceComponent.h"
 #include "Prometheus.h"
+#include <WiFiMan.h>
 
 #define LOG_PERIOD 5000 // ms
 

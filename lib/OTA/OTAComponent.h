@@ -11,6 +11,7 @@
 #include <Arduino.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
+#include <ESP8266OTA.h>
 
 #include <ArduinoOTA.h>
 #include <ESP8266WiFi.h>
@@ -23,6 +24,7 @@
 class OTAComponent: public AbstractComponent {
 	ESP8266WebServer *_server;
 	ESP8266HTTPUpdateServer httpUpdater;
+	ESP8266OTA espota;
 	String nodeId;
 	boolean updating = false;
 

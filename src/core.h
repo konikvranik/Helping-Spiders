@@ -25,7 +25,7 @@
 // Enable these if your MQTT broker requires usenrame/password
 
 #define DEBUG_ESP_PORT Serial
-//#define DISABLE_LOGGING
+#define DISABLE_LOGGING
 
 #include <StatusComponent.h>
 #include <OTAComponent.h>
@@ -83,4 +83,14 @@ AbstractComponent *modules[] =
 
 #endif
 
-#include <IonDB.h>
+#ifndef PINMODE2
+#define PINMODE2 OUTPUT
+#endif
+
+#ifndef PINMODE0
+#define PINMODE0 OUTPUT
+#endif
+
+#ifndef PINMODE15
+#define PINMODE15 OUTPUT
+#endif

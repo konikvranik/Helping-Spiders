@@ -52,17 +52,11 @@ void setupNTP()
 // ======================== SETUP ============================
 void setup()
 {
-
-	Dictionary<int, int> *dict = new SkipList<int, int>(-1, key_type_numeric_signed, sizeof(int), sizeof(int), 7);
-
-	/* Insert a record with key 3 and value 10 */
-	dict->insert(3, 10);
-
 	//	Serial.end();
 	//	Serial1.end();
-	pinMode(0, OUTPUT);
-	pinMode(2, OUTPUT);
-	pinMode(15, OUTPUT);
+	pinMode(0, PINMODE0);
+	pinMode(2, PINMODE2);
+	pinMode(15, PINMODE15);
 #ifdef INIT_STUFF
 	INIT_STUFF
 #endif

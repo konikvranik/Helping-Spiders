@@ -40,10 +40,11 @@ void StatusComponent::setup()
 		("Status initializing with " + String(components_count) + " components" CR).c_str());
 	if (webServer != NULL)
 	{
-		webServer->on("/status", HTTP_GET,
+		webServer->on("/config", HTTP_GET,
 					  [&]() {
 						  webServer->sendHeader("Refresh", "20; url=/status");
-						  webServer->send(200, "text/plain; charset=utf-8", this->ModulesStatus());
+						  webServer->send(200, "text/plain; charset=utf-8", "config...");
+						  rebootToApMode();
 					  });
 		webServer->on("/status.json", HTTP_GET, [&]() {
 			webServer->send(200, "application/json; charset=utf-8",

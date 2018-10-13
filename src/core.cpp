@@ -2,11 +2,10 @@
 
 ADC_MODE(ADC_VCC);
 
-
 int module_count =
 	sizeof(modules) > 0 ? sizeof(modules) / sizeof(modules[0]) : 0;
 
-StatusComponent status_component(STRING(NODE_ID), modules, module_count, &http_server);
+StatusComponent status_component(str(NODE_ID), modules, module_count, &http_server);
 
 void onSTAGotIP(WiFiEventStationModeGotIP ipInfo)
 {
@@ -52,8 +51,12 @@ void setupNTP()
 // ======================== SETUP ============================
 void setup()
 {
-	//	Serial.end();
-	//	Serial1.end();
+#ifndef DISABLE_LOGGING
+	DEBUG_ESP_PORT.begin(115200);
+	Log.begin(LOG_LEVEL_TRACE, &DEBUG_ESP_PORT);
+#else
+	DEBUG_ESP_PORT.end();
+#endif
 	pinMode(0, PINMODE0);
 	pinMode(2, PINMODE2);
 	pinMode(15, PINMODE15);
@@ -61,17 +64,16 @@ void setup()
 	INIT_STUFF
 #endif
 
-	wman.start();
+	Log.trace("SSID: ");
+	Log.trace(str(WIFI_SSID));
+	WiFi.begin(str(WIFI_SSID), str(WIFI_PASSWORD));
 	WiFi.onStationModeGotIP(onSTAGotIP); // As soon WiFi is connected, start NTP Client
 	WiFi.onStationModeDisconnected(onSTADisconnected);
 	while (WiFi.status() != WL_CONNECTED)
 	{
-		delay(500);
+		delay(100);
+		yield;
 	}
-#ifndef DISABLE_LOGGING
-	DEBUG_ESP_PORT.begin(115200);
-	Log.begin(LOG_LEVEL_TRACE, &DEBUG_ESP_PORT);
-#endif
 	Log.notice(
 		(CR "starting with " + String(module_count) + " modules..." CR).c_str());
 

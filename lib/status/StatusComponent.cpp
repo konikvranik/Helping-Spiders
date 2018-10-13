@@ -40,12 +40,6 @@ void StatusComponent::setup()
 		("Status initializing with " + String(components_count) + " components" CR).c_str());
 	if (webServer != NULL)
 	{
-		webServer->on("/config", HTTP_GET,
-					  [&]() {
-						  webServer->sendHeader("Refresh", "20; url=/status");
-						  webServer->send(200, "text/plain; charset=utf-8", "config...");
-						  rebootToApMode();
-					  });
 		webServer->on("/status.json", HTTP_GET, [&]() {
 			webServer->send(200, "application/json; charset=utf-8",
 							this->ModulesJson());
@@ -174,7 +168,7 @@ String StatusComponent::moduleName()
 String StatusComponent::prometheusReport()
 {
 	Prometheus *p = new Prometheus("uptime", NTP.getUptime(), "counter",
-								   "Uptime of node " STRING(NODE_ID));
+								   "Uptime of node " str(NODE_ID));
 	p->attribute("unit", "s");
 	String result = p->to_string(true);
 	delete p;
@@ -218,7 +212,7 @@ String StatusComponent::prometheusReport()
 					   "ESP CPU frequency in MHz");
 	result += p->to_string(true);
 	delete p;
-	p = new Prometheus("esp_power_supply", ESP.getVcc()/1000.000, "gauge",
+	p = new Prometheus("esp_power_supply", ESP.getVcc() / 1000.000, "gauge",
 					   "ESP voltage in V");
 	p->attribute("unit", "V");
 	p->attribute("type", "voltage");

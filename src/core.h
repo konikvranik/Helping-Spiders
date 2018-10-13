@@ -5,27 +5,29 @@
 //#define CR "\r\n"
 
 #include <Arduino.h>
-#include <ArduinoLog.h>
-#include <DNSServer.h>
-#include <ESP8266WebServer.h>
-#include <Esp.h>
 #include <HardwareSerial.h>
-#include <NtpClientLib.h>
-#include <TimeLib.h>
-#include <WString.h>
-#include <string>
 #include <ESP8266WiFi.h>
-#include <WiFiMan.h>
+#include <ArduinoLog.h>
+#include <Esp.h>
+#include <ESP8266WebServer.h>
+#include <TimeLib.h>
+#include <NtpClientLib.h>
 
 #include "AbstractComponent.h"
 
-#define STRING(s) #s
+// #define STRING(s) str(s)
+// #define str(s) #s
+#define xstr(s) str(s)
+#define str(s) #s
+
 // Set this node's subscribe and publish topic prefix
 
 // Enable these if your MQTT broker requires usenrame/password
 
 #define DEBUG_ESP_PORT Serial
+#ifndef DEBUG
 #define DISABLE_LOGGING
+#endif
 
 #include <StatusComponent.h>
 #include <OTAComponent.h>
@@ -53,11 +55,10 @@
 #endif
 
 ESP8266WebServer http_server(80);
-WiFiMan wman;
 
 AbstractComponent *modules[] =
     {
-        new OTAComponent(STRING(NODE_ID), &http_server),
+        new OTAComponent(str(NODE_ID), &http_server),
 #ifdef ENABLE_RGB
         new RGBComponent(RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
 #endif
@@ -74,10 +75,10 @@ AbstractComponent *modules[] =
         new HTUComponent(TEMP_CHILD_ID, HUM_CHILD_ID, HTU_SCL, HTU_SDA),
 #endif
 #ifdef ENABLE_DS18
-        new DS18Component(STRING(NODE_ID), TEMP_CHILD_ID, DS18_PIN),
+        new DS18Component(str(NODE_ID), TEMP_CHILD_ID, DS18_PIN),
 #endif
 #ifdef ENABLE_HCSR04
-        new HcSr04Component(STRING(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
+        new HcSr04Component(str(NODE_ID), DIST_CHILD_ID, HCSR04_TRIG_PIN, HCSR04_ECHO_PIN),
 #endif
 };
 

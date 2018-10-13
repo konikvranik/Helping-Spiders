@@ -41,7 +41,6 @@ void OTAComponent::setup()
 	Log.notice("IP address: %s" CR, String(WiFi.localIP()).c_str());
 
 	MDNS.begin(hostname.c_str());
-	espota.setup(_server, "/espota");
 	httpUpdater.setup(_server);
 	_server->begin();
 	MDNS.addService("http", "tcp", 80);

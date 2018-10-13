@@ -12,7 +12,8 @@
 #include <WString.h>
 #include <cstdint>
 
-#define STRING(s) #s
+#define str(s) xstr(s)
+#define xstr(s) #s
 
 class Prometheus
 {

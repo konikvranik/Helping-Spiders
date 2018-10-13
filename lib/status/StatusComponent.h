@@ -8,6 +8,7 @@
 #ifndef STATUSCOMPONENT_H_
 #define STATUSCOMPONENT_H_
 
+#include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <NtpClientLib.h>
 #include <ArduinoLog.h>
@@ -16,7 +17,6 @@
 #include "AbstractTemperatureComponent.h"
 #include "AbstractDistanceComponent.h"
 #include "Prometheus.h"
-#include <WiFiMan.h>
 
 #define LOG_PERIOD 5000 // ms
 

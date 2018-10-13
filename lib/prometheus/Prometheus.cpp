@@ -14,8 +14,8 @@ Prometheus::Prometheus(const String name, float value, String type,
 	this->type = type;
 	this->description = description;
 	this->value = value;
-	this->attribute("node", STRING(NODE_ID));
-	this->attribute("version", STRING(SV));
+	this->attribute("node", str(NODE_ID));
+	this->attribute("version", str(SV));
 }
 
 Prometheus::Prometheus(const String name, float value, String type,

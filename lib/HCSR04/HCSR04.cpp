@@ -22,6 +22,10 @@ void HcSr04Component::setup()
 
 void HcSr04Component::loop()
 {
+}
+
+float HcSr04Component::getDistance()
+{
 	if (lastRun == 0 || lastRun + delayMS < millis())
 	{
 		double old_distance = this->distance;
@@ -37,10 +41,6 @@ void HcSr04Component::loop()
 			}
 		}
 	}
-}
-
-float HcSr04Component::getDistance()
-{
 	return this->distance;
 }
 

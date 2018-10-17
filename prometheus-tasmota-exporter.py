@@ -19,32 +19,33 @@ class TasmotaCollector(object):
 
     def collect(self):
         for u in self.urls:
-            tmp = self._collectStatus(u, "http://%s/cm?cmnd=status%%200" % u)
+            data = json.load(urllib2.urlopen("http://%s/cm?cmnd=status%%200" % u))
+            tmp = self._collectStatus(u, data)
             if tmp:
               yield tmp
-            tmp = self._collectEnergy(u, "http://%s/cm?cmnd=status%%200" % u)
+            tmp = self._collectEnergy(u, data)
             if tmp:
               yield tmp
-            tmp = self._collectPower(u, "http://%s/cm?cmnd=status%%200" % u)
+            tmp = self._collectPower(u, data)
             if tmp:
               yield tmp
-            tmp = self._collectVoltage(u, "http://%s/cm?cmnd=status%%200" % u)
+            tmp = self._collectVoltage(u, data)
             if tmp:
               yield tmp
 
-    def _collectStatus(self, node, url):
+    def _collectStatus(self, node, data):
         metric = StateSetMetricFamily(
             'switch_state',
             'State of switches',
             labels=["node", "domain"])
-        result = pyjq.one(statusQuery, json.load(urllib2.urlopen(url)))
+        result = pyjq.one(statusQuery, data)
         metric.add_metric(
             [node, "switch"], result)
         return metric
 
-    def _collectEnergy(self, node, url):
+    def _collectEnergy(self, node, data):
         print url, energyQuery
-        result = pyjq.first(energyQuery, json.load(urllib2.urlopen(url)))
+        result = pyjq.first(energyQuery, data)
         print result
         if result:
             metric = GaugeMetricFamily(
@@ -52,12 +53,12 @@ class TasmotaCollector(object):
                 'Energy reported by sensor',
                 labels=["node", "domain", "type", "unit", "context"])
             for k,v in result.iteritems():
-                metric.add_metric([node, "sensor", "energy", "W", k], v)
+                metric.add_metric([node, "sensor", "energy", "kWh", k], v)
             return metric
 
-    def _collectPower(self, node, url):
+    def _collectPower(self, node, data):
         print url, powerQuery
-        result = pyjq.first(powerQuery, json.load(urllib2.urlopen(url)))
+        result = pyjq.first(powerQuery, data)
         print result
         if result != None:
             metric = GaugeMetricFamily(
@@ -69,9 +70,9 @@ class TasmotaCollector(object):
                 [node, "sensor", "power", "W"], result)
             return metric
 
-    def _collectVoltage(self, node, url):
+    def _collectVoltage(self, node, data):
         print url, voltageQuery
-        result = pyjq.first(voltageQuery, json.load(urllib2.urlopen(url)))
+        result = pyjq.first(voltageQuery, )data)
         print result
         if result != None:
             metric = GaugeMetricFamily(
@@ -83,9 +84,9 @@ class TasmotaCollector(object):
                 [node, "sensor", "voltage", "V"], result)
             return metric
 
-    def _collectCurrent(self, node, url):
+    def _collectCurrent(self, node, data):
         print url, currentQuery
-        result = pyjq.first(currentQuery, json.load(urllib2.urlopen(url)))
+        result = pyjq.first(currentQuery, data)
         print result
         if result != None:
             metric = GaugeMetricFamily(

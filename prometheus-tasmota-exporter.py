@@ -6,6 +6,7 @@ from prometheus_client.core import GaugeMetricFamily, StateSetMetricFamily, REGI
 import pyjq
 import logging
 from systemd.journal import JournaldLogHandler
+from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 journald_handler = JournaldLogHandler()
@@ -21,6 +22,8 @@ energyQuery = '.StatusSNS.ENERGY.Total'
 powerQuery = '.StatusSNS.ENERGY.Power'
 voltageQuery = '.StatusSNS.ENERGY.Voltage'
 currentQuery = '.StatusSNS.ENERGY.Current'
+powerSupplyQuery = '.StatusSTS.Vcc'
+uptimeQuery = '.StatusSTS.Uptime'
 
 
 class TasmotaCollector(object):
@@ -43,6 +46,12 @@ class TasmotaCollector(object):
             if tmp:
                 yield tmp
             tmp = self._collectVoltage(u, data)
+            if tmp:
+                yield tmp
+            tmp = self._collectPowerSupply(u, data)
+            if tmp:
+                yield tmp
+            tmp = self._collectUptime(u, data)
             if tmp:
                 yield tmp
 
@@ -97,6 +106,33 @@ class TasmotaCollector(object):
                 labels=["node", "domain", "type", "unit"])
             metric.add_metric(
                 [node, "sensor", "current", "A"], result)
+            return metric
+
+    def _collectPowerSupply(self, node, data):
+        result = pyjq.first(powerSupplyQuery, data)
+        logging.info("Power supply: %s" % result)
+        if result != None:
+            metric = GaugeMetricFamily(
+                'esp_power_supply',
+                'Voltage provided to ESP module',
+                labels=["node", "domain", "type", "unit"])
+            metric.add_metric(
+                [node, "sensor", "voltage", "V"], result)
+            return metric
+
+    def _collectUptime(self, node, data):
+        result = pyjq.first(uptimeQuery, data)
+        logging.info("Power supply: %s" % result)
+        if result != None:
+            (d, t) = result.split('T')
+            t = datetime.strptime(t, '%H:%M:%S')
+            td = timedelta(days=int(d), hours = t.hour, minutes = t.minute, seconds =t.second)
+            metric = GaugeMetricFamily(
+                'uptime',
+                'Voltage provided to ESP module',
+                labels=["node", "domain", "type", "unit"])
+            metric.add_metric(
+                [node, "sensor", "time", "s"], td.total_seconds())
             return metric
 
 

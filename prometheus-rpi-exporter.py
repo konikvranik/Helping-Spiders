@@ -1,6 +1,7 @@
 from prometheus_client import start_http_server
 from prometheus_client.core import GaugeMetricFamily, StateSetMetricFamily, REGISTRY
 import logging
+import time
 from systemd.journal import JournaldLogHandler
 import socket
 
@@ -15,18 +16,14 @@ logger.setLevel(logging.DEBUG)
 class RPiCollector(object):
 
     def collect(self):
-        metric = StateSetMetricFamily(
-            'temperature',
-            'RPi temperature',
-            labels=["node", "domain"])
         f = open('/sys/class/thermal/thermal_zone0/temp', 'r')
-        
-        metric.add_metric(
-            [socket.gethostname(), "switch"], int(f.read()) * 0.001)
-        return metric
+
+        metric = GaugeMetricFamily('temperature', 'RPi temperature', labels=['node', 'domain','type', 'unit'])
+        metric.add_metric([str(socket.gethostname()), 'sensor', 'temperature', '°C'], int(f.read()) * 0.001)
+        yield metric
 
 if __name__ == "__main__":
     REGISTRY.register(RPiCollector())
-    start_http_server(9118)
+    start_http_server(9119)
     while True:
         time.sleep(1)

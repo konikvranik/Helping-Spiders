@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from prometheus_client import start_http_server
 from prometheus_client.core import GaugeMetricFamily, StateSetMetricFamily, REGISTRY
 import logging
@@ -19,7 +22,7 @@ class RPiCollector(object):
         f = open('/sys/class/thermal/thermal_zone0/temp', 'r')
 
         metric = GaugeMetricFamily('temperature', 'RPi temperature', labels=['node', 'domain','type', 'unit'])
-        metric.add_metric([str(socket.gethostname()), 'sensor', 'temperature', '°C'], int(f.read()) * 0.001)
+        metric.add_metric([str(socket.gethostname()), 'sensor', 'temperature', u'°C'], int(f.read()) * 0.001)
         yield metric
 
 if __name__ == "__main__":

@@ -56,7 +56,6 @@ void DS18Component::readTemps(JsonArray &jo)
 		{
 			JsonObject &t = jo.createNestedObject();
 			t["address"] = addr2string(addr);
-			//this->sensor.requestTemperaturesByAddress(devices[i]);
 			float tempC = this->sensor.getTempC(addr);
 			t["value"] =
 				tempC == DEVICE_DISCONNECTED_C ? "N/A" : String(tempC);
@@ -100,12 +99,14 @@ String DS18Component::prometheus()
 		if (d["value"] == "N/A")
 			continue;
 		p = new Prometheus(
-			"DS18_" + this->AbstractTemperatureComponent::getType(),
+			//"DS18_" +
+			 this->AbstractTemperatureComponent::getType(),
 			d["value"], "gauge",
 			String("Temperature measured by DS18b20 with address ") + d["address"].asString());
 		p->attribute("address", d["address"]);
 		p->attribute("unit", "°C");
 		p->attribute("type", "temperature");
+		p->attribute("sensor", "DS18B20");
 		s += p->to_string(true);
 		delete p;
 	}

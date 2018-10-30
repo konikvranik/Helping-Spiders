@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import logging
+from datetime import datetime, timedelta
 import json
 import time
 import urllib2
 from prometheus_client import start_http_server
 from prometheus_client.core import GaugeMetricFamily, StateSetMetricFamily, REGISTRY
 import pyjq
-import logging
 from systemd.journal import JournaldLogHandler
-from datetime import datetime, timedelta
 
 logger = logging.getLogger(__name__)
 journald_handler = JournaldLogHandler()
@@ -37,7 +37,7 @@ class TasmotaCollector(object):
     def collect(self):
         for u in self.urls:
             try:
-                logger.info("Requesting JSON for %s" % u)
+                logger.info("Requesting JSON for %s", u)
                 data = json.load(urllib2.urlopen(
                     "http://%s/cm?cmnd=status%%200" % u))
                 tmp = self._collectStatus(u, data)
@@ -74,7 +74,7 @@ class TasmotaCollector(object):
 
     def _collectEnergy(self, node, data):
         result = pyjq.first(energyQuery, data)
-        logger.info("Energy: %s" % result)
+        logger.info("Energy: %s", result)
         if result != None:
             metric = GaugeMetricFamily('energy', 'Energy reported by sensor',
                                        labels=["node", "domain", "type", "unit"])
@@ -83,7 +83,7 @@ class TasmotaCollector(object):
 
     def _collectPower(self, node, data):
         result = pyjq.first(powerQuery, data)
-        logger.info("Power: %s" % result)
+        logger.info("Power: %s", result)
         if result != None:
             metric = GaugeMetricFamily('power', 'Power reported by sensor',
                                        labels=["node", "domain", "type", "unit"])
@@ -92,7 +92,7 @@ class TasmotaCollector(object):
 
     def _collectVoltage(self, node, data):
         result = pyjq.first(voltageQuery, data)
-        logger.info("Voltage: %s" % result)
+        logger.info("Voltage: %s", result)
         if result != None:
             metric = GaugeMetricFamily(
                 'voltage',
@@ -104,7 +104,7 @@ class TasmotaCollector(object):
 
     def _collectCurrent(self, node, data):
         result = pyjq.first(currentQuery, data)
-        logger.info("Current: %s" % result)
+        logger.info("Current: %s", result)
         if result != None:
             metric = GaugeMetricFamily(
                 'current',
@@ -116,7 +116,7 @@ class TasmotaCollector(object):
 
     def _collectPowerSupply(self, node, data):
         result = pyjq.first(powerSupplyQuery, data)
-        logger.info("Power supply: %s" % result)
+        logger.info("Power supply: %s", result)
         if result != None:
             metric = GaugeMetricFamily(
                 'esp_power_supply',
@@ -128,7 +128,7 @@ class TasmotaCollector(object):
 
     def _collectUptime(self, node, data):
         result = pyjq.first(uptimeQuery, data)
-        logger.info("Power supply: %s" % result)
+        logger.info("Power supply: %s", result)
         if result != None:
             (d, t) = result.split('T')
             t = datetime.strptime(t, '%H:%M:%S')

@@ -19,7 +19,7 @@ Prometheus::Prometheus(const String name, float value, String type,
 }
 
 Prometheus::Prometheus(const String name, float value, String type,
-					   String description, uint16_t timestamp)
+					   String description, uint32_t timestamp)
 {
 	Prometheus(name, value, type, description);
 	this->timestamp = timestamp;

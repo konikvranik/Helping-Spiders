@@ -42,12 +42,17 @@ void DS18Component::setup()
 
 void DS18Component::loop()
 {
+	yield;
 }
 
 void DS18Component::readTemps(JsonArray &jo)
 {
-	if (!(0 < lastRun && lastRun < millis() - delayMS))
+	if (0 == this->lastRun || this->lastRun < millis() - delayMS)
+	{
+		this->sensor.begin();
 		this->sensor.requestTemperatures();
+		this->lastRun = millis();
+	}
 	for (int i = 0; i < this->sensor.getDeviceCount(); i++)
 	{
 		DeviceAddress addr;
@@ -56,23 +61,20 @@ void DS18Component::readTemps(JsonArray &jo)
 		{
 			JsonObject &t = jo.createNestedObject();
 			t["address"] = addr2string(addr);
+			t["resolution"] = String(
+				this->sensor.getResolution(addr));
 			float tempC = this->sensor.getTempC(addr);
 			t["value"] =
 				tempC == DEVICE_DISCONNECTED_C ? "N/A" : String(tempC);
-			t["resolution"] = String(
-				this->sensor.getResolution(addr));
 			t["type"] = "temperature";
 			t["unit"] = "°C";
 		}
 	}
-
-	// Get temperature event and print its value.
-	this->lastRun = millis();
 }
 
 float DS18Component::getTemperature()
 {
-	return NULL;
+	return std::numeric_limits<float>::min();
 }
 
 void DS18Component::reportStatus(JsonObject &jo)
@@ -85,6 +87,7 @@ void DS18Component::reportStatus(JsonObject &jo)
 	params["complete"] = this->sensor.isConversionComplete();
 	params["resolution"] = this->sensor.getResolution();
 	readTemps(jo.createNestedArray("devices"));
+	jo["lastRun"] = this->lastRun;
 }
 
 String DS18Component::prometheus()
@@ -99,10 +102,9 @@ String DS18Component::prometheus()
 		if (d["value"] == "N/A")
 			continue;
 		p = new Prometheus(
-			//"DS18_" +
-			 this->AbstractTemperatureComponent::getType(),
+			this->AbstractTemperatureComponent::getType(),
 			d["value"], "gauge",
-			String("Temperature measured by DS18b20 with address ") + d["address"].asString());
+			String("Temperature measured by DS18b20 with address ") + d["address"].as<char *>());
 		p->attribute("address", d["address"]);
 		p->attribute("unit", "°C");
 		p->attribute("type", "temperature");

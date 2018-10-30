@@ -33,8 +33,7 @@ void DHTComponent::loop()
   if (dhtLastRun + dhtDelayMS < millis())
   {
     double old_temp = sensor.temperature, old_hum = sensor.humidity;
-    // Get temperature event and print its value.
-    if (err = sensor.read21(pinDHT))
+    if (err == sensor.read21(pinDHT))
     {
       return;
     }

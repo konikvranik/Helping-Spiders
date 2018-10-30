@@ -46,6 +46,13 @@ void StatusComponent::setup()
 			webServer->send(200, "text/plain; version=0.0.4; charset=utf-8",
 							this->prometheusReport());
 		});
+		webServer->on("/reset", HTTP_GET, [&]() {
+			webServer->send(200, "text/plain", "Resetting...");
+			webServer->close();
+			yield;
+			delay(1000);
+			ESP.restart();
+		});
 	}
 }
 

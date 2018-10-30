@@ -8,6 +8,7 @@
 #ifndef SRC_HT_SENSOR_DS18COMPONENT_H_
 #define SRC_HT_SENSOR_DS18COMPONENT_H_
 
+#include <Arduino.h>
 #include <DallasTemperature.h>
 #include <OneWire.h>
 #include <ArduinoJson.h>
@@ -15,13 +16,12 @@
 #include <AbstractTemperatureComponent.h>
 #include <Prometheus.h>
 
-#define DS18_DELAY 10000
-#define MAX_DEVICES 255
+#define DS18_DELAY 2000
 
 class DS18Component : public AbstractComponent,
 					  public AbstractTemperatureComponent
 {
-	uint32_t delayMS = 2000, lastRun = 0;
+	uint32_t delayMS = DS18_DELAY, lastRun = 0;
 	int16_t pin;
 	DallasTemperature sensor;
 	String addr2string(DeviceAddress deviceAddr);

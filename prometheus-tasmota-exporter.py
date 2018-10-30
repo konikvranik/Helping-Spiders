@@ -36,27 +36,30 @@ class TasmotaCollector(object):
 
     def collect(self):
         for u in self.urls:
-            logging.info("Requesting JSON for %s" % u)
-            data = json.load(urllib2.urlopen(
-                "http://%s/cm?cmnd=status%%200" % u))
-            tmp = self._collectStatus(u, data)
-            if tmp:
-                yield tmp
-            tmp = self._collectEnergy(u, data)
-            if tmp:
-                yield tmp
-            tmp = self._collectPower(u, data)
-            if tmp:
-                yield tmp
-            tmp = self._collectVoltage(u, data)
-            if tmp:
-                yield tmp
-            tmp = self._collectPowerSupply(u, data)
-            if tmp:
-                yield tmp
-            tmp = self._collectUptime(u, data)
-            if tmp:
-                yield tmp
+            try:
+                logger.info("Requesting JSON for %s" % u)
+                data = json.load(urllib2.urlopen(
+                    "http://%s/cm?cmnd=status%%200" % u))
+                tmp = self._collectStatus(u, data)
+                if tmp:
+                    yield tmp
+                tmp = self._collectEnergy(u, data)
+                if tmp:
+                    yield tmp
+                tmp = self._collectPower(u, data)
+                if tmp:
+                    yield tmp
+                tmp = self._collectVoltage(u, data)
+                if tmp:
+                    yield tmp
+                tmp = self._collectPowerSupply(u, data)
+                if tmp:
+                    yield tmp
+                tmp = self._collectUptime(u, data)
+                if tmp:
+                    yield tmp
+            except Exception as e:
+                logger.error("%s %s", u, e)
 
     def _collectStatus(self, node, data):
         metric = StateSetMetricFamily(
@@ -64,14 +67,14 @@ class TasmotaCollector(object):
             'State of switches',
             labels=["node", "domain"])
         result = pyjq.first(statusQuery, data)
-        logging.info("Statuses: %s" % result)
+        logger.info("Statuses: %s" % result)
         metric.add_metric(
             [node, "switch"], result)
         return metric
 
     def _collectEnergy(self, node, data):
         result = pyjq.first(energyQuery, data)
-        logging.info("Energy: %s" % result)
+        logger.info("Energy: %s" % result)
         if result != None:
             metric = GaugeMetricFamily('energy', 'Energy reported by sensor',
                                        labels=["node", "domain", "type", "unit"])
@@ -80,7 +83,7 @@ class TasmotaCollector(object):
 
     def _collectPower(self, node, data):
         result = pyjq.first(powerQuery, data)
-        logging.info("Power: %s" % result)
+        logger.info("Power: %s" % result)
         if result != None:
             metric = GaugeMetricFamily('power', 'Power reported by sensor',
                                        labels=["node", "domain", "type", "unit"])
@@ -89,7 +92,7 @@ class TasmotaCollector(object):
 
     def _collectVoltage(self, node, data):
         result = pyjq.first(voltageQuery, data)
-        logging.info("Voltage: %s" % result)
+        logger.info("Voltage: %s" % result)
         if result != None:
             metric = GaugeMetricFamily(
                 'voltage',
@@ -101,7 +104,7 @@ class TasmotaCollector(object):
 
     def _collectCurrent(self, node, data):
         result = pyjq.first(currentQuery, data)
-        logging.info("Current: %s" % result)
+        logger.info("Current: %s" % result)
         if result != None:
             metric = GaugeMetricFamily(
                 'current',
@@ -113,7 +116,7 @@ class TasmotaCollector(object):
 
     def _collectPowerSupply(self, node, data):
         result = pyjq.first(powerSupplyQuery, data)
-        logging.info("Power supply: %s" % result)
+        logger.info("Power supply: %s" % result)
         if result != None:
             metric = GaugeMetricFamily(
                 'esp_power_supply',
@@ -125,7 +128,7 @@ class TasmotaCollector(object):
 
     def _collectUptime(self, node, data):
         result = pyjq.first(uptimeQuery, data)
-        logging.info("Power supply: %s" % result)
+        logger.info("Power supply: %s" % result)
         if result != None:
             (d, t) = result.split('T')
             t = datetime.strptime(t, '%H:%M:%S')

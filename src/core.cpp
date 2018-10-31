@@ -1,7 +1,5 @@
 #include "core.h"
 
-#include <HardwareSerial.h>
-
 ADC_MODE(ADC_VCC);
 
 int module_count =
@@ -47,7 +45,7 @@ void setupNTP()
 // ======================== SETUP ============================
 void setup()
 {
-	Serial.begin(115200);
+//	Serial.begin(115200);
 
 	pinMode(0, PINMODE0);
 	pinMode(2, PINMODE2);

@@ -26,19 +26,17 @@ void HcSr04Component::loop()
 
 float HcSr04Component::getDistance()
 {
-	if (lastRun == 0 || lastRun + delayMS < millis())
+	if (lastRun == 0 || lastRun < millis() - delayMS)
 	{
-		double old_distance = this->distance;
 		float tmp = this->sensor->distanceRead(CM) / 100.000;
 		lastRun = millis();
 		if (tmp > 0)
 		{
-			this->distance = tmp;
-			if (old_distance != this->distance)
+			if (this->distance != tmp)
 			{
 				const String topic = this->makeTopic("");
-				const String value = String(this->getDistance());
 			}
+			this->distance = tmp;
 		}
 	}
 	return this->distance;

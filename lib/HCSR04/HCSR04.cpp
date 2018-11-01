@@ -17,7 +17,7 @@ void HcSr04Component::setup()
 {
 	pinMode(trigPin, OUTPUT);
 	pinMode(echoPin, INPUT);
-	this->sensor = new Ultrasonic(trigPin, echoPin);
+	this->sensor = new NewPing(trigPin, echoPin, 250);
 }
 
 void HcSr04Component::loop()
@@ -28,7 +28,7 @@ float HcSr04Component::getDistance()
 {
 	if (lastRun == 0 || lastRun < millis() - delayMS)
 	{
-		float tmp = this->sensor->distanceRead(CM) / 100.000;
+		float tmp = this->sensor->ping_cm() / 100.000;
 		lastRun = millis();
 		if (tmp > 0)
 		{

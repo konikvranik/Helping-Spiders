@@ -9,7 +9,7 @@
 #define HC_SR_04_COMPONENT_H_
 
 #include <Arduino.h>
-#include <Ultrasonic.h>
+#include <NewPing.h>
 #include "AbstractDistanceComponent.h"
 #include "Prometheus.h"
 
@@ -18,7 +18,7 @@ class HcSr04Component: public AbstractComponent,
 	float distance = -1;
 	uint32_t delayMS = 2000, lastRun = 0;
 	int16_t trigPin = 0, echoPin = 0;
-	Ultrasonic* sensor;
+	NewPing* sensor;
 
   public:
 	

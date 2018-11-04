@@ -45,8 +45,10 @@ void setupNTP()
 // ======================== SETUP ============================
 void setup()
 {
-//	Serial.begin(115200);
-
+#ifndef DISABLE_LOGGING
+	Serial.begin(115200);
+	Log.begin(LOG_LEVEL_VERBOSE, &Serial, true);
+#endif
 	pinMode(0, PINMODE0);
 	pinMode(2, PINMODE2);
 	pinMode(15, PINMODE15);
@@ -55,6 +57,7 @@ void setup()
 #endif
 
 	WiFi.begin(str(WIFI_SSID), str(WIFI_PASSWORD));
+	Log.notice("SSID: %s PWD: %s" CR, str(WIFI_SSID), str(WIFI_PASSWORD));
 	WiFi.onStationModeGotIP(onSTAGotIP); // As soon WiFi is connected, start NTP Client
 	WiFi.onStationModeDisconnected(onSTADisconnected);
 	while (WiFi.waitForConnectResult() != WL_CONNECTED)

@@ -11,6 +11,7 @@
 #include <ESP8266WebServer.h>
 #include <TimeLib.h>
 #include <NtpClientLib.h>
+#include <ArduinoLog.h>
 
 #include "AbstractComponent.h"
 

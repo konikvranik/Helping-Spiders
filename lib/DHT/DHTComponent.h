@@ -11,28 +11,27 @@
 #include "AbstractComponent.h"
 #include "AbstractHumidityComponent.h"
 #include "AbstractTemperatureComponent.h"
-#include "dht.h"
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
 #include "Prometheus.h"
 
 #define DHT_DELAY 2000 // 15*60*1000
 
 class DHTComponent : public AbstractComponent,
                      public AbstractHumidityComponent,
-                     public AbstractTemperatureComponent {
-  int16_t temp = -273, hum = -1;
-  uint32_t dhtDelayMS = 2000, dhtLastRun = 0;
-  int16_t pinDHT = 1;
+                     public AbstractTemperatureComponent
+{
+  uint32_t dhtDelayMS = 10000, dhtLastRun = 0;
 
 public:
   uint8_t hum_sensor_id;
-  dht sensor;
-  uint8_t err = DHTLIB_OK;
+  DHT *sensor;
   DHTComponent(const String node_id, const uint8_t, const uint8_t, const int16_t);
   virtual ~DHTComponent();
   virtual void setup();
   virtual void loop();
-  virtual float getHumidity();
-  virtual float getTemperature();
+  virtual double getHumidity();
+  virtual double getTemperature();
   virtual void reportStatus(JsonObject &);
   virtual String prometheus();
   virtual String moduleName();

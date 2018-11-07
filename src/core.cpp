@@ -49,9 +49,15 @@ void setup()
 	Serial.begin(115200);
 	Log.begin(LOG_LEVEL_VERBOSE, &Serial, true);
 #endif
+#ifdef PINMODE0
 	pinMode(0, PINMODE0);
+#endif
+#ifdef PINMODE2
 	pinMode(2, PINMODE2);
+#endif
+#ifdef PINMODE15
 	pinMode(15, PINMODE15);
+#endif
 #ifdef INIT_STUFF
 	INIT_STUFF
 #endif

@@ -12,9 +12,10 @@
 
 class AbstractHumidityComponent {
 public:
-	virtual float getHumidity();
-	virtual String getType() {
-		return "temperature";
+  virtual double getHumidity();
+  virtual String getType()
+  {
+	  return "humidity";
 	}
 
 };

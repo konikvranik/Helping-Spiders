@@ -72,7 +72,7 @@ void DS18Component::readTemps(JsonArray &jo)
 	}
 }
 
-float DS18Component::getTemperature()
+double DS18Component::getTemperature()
 {
 	return std::numeric_limits<float>::min();
 }

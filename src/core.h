@@ -67,7 +67,7 @@ AbstractComponent *modules[] =
         new iLifeComponent(ILIFE_CHILD_ID, IRTX_PIN),
 #endif
 #ifdef ENABLE_DHT
-        new DHTComponent(TEMP_CHILD_ID, HUM_CHILD_ID, DHT_PIN),
+        new DHTComponent(str(NODE_ID), TEMP_CHILD_ID, HUM_CHILD_ID, DHT_PIN),
 #endif
 #ifdef ENABLE_HTU
         new HTUComponent(TEMP_CHILD_ID, HUM_CHILD_ID, HTU_SCL, HTU_SDA),

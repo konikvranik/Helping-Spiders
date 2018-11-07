@@ -12,9 +12,10 @@
 
 class AbstractTemperatureComponent {
 public:
-	virtual float getTemperature();
-	virtual String getType() {
-		return "temperature";
+  virtual double getTemperature();
+  virtual String getType()
+  {
+	  return "temperature";
 	}
 };
 

@@ -5,6 +5,6 @@
 #define HUM_CHILD_ID 2
 #define DHT_PIN 2
 #define ENABLE_DHT
-//#define PINMODE2 INPUT
-//#define PINMODE0 INPUT
+#define PINMODE2 INPUT
+#define PINMODE0 INPUT
 #define DISABLE_LOGGING

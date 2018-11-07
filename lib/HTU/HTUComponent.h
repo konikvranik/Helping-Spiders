@@ -37,8 +37,8 @@ class HTUComponent : public AbstractComponent,
 	virtual ~HTUComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual float getHumidity();
-	virtual float getTemperature();
+	virtual double getHumidity();
+	virtual double getTemperature();
 	virtual void reportStatus(JsonObject &);
 	virtual String moduleName();
 };

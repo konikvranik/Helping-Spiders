@@ -34,7 +34,7 @@ class DS18Component : public AbstractComponent,
 	virtual ~DS18Component();
 	virtual void setup();
 	virtual void loop();
-	virtual float getTemperature();
+	virtual double getTemperature();
 	virtual void reportStatus(JsonObject &);
 	String prometheus();
 	virtual String moduleName();

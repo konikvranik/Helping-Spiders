@@ -46,9 +46,9 @@ void HTUComponent::loop()
   }
 }
 
-float HTUComponent::getHumidity() { return hum; }
+double HTUComponent::getHumidity() { return hum; }
 
-float HTUComponent::getTemperature() { return temp; }
+double HTUComponent::getTemperature() { return temp; }
 
 void HTUComponent::reportStatus(JsonObject &jo)
 {

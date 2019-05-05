@@ -8,3 +8,5 @@ CMakeListsPrivate.txt
 .vscode/launch.json
 secrets.h
 tools/decoder.pyc
+*.pyc
+.vscode

@@ -9,3 +9,4 @@ before_script:
 job:
   stage: test
   script: "platformio ci --board=esp01_1m --board=esp12e --board=esp01 --board=esp07 --board=d1"
+variables: {PLATFORMIO_CI_SRC: "crc/core.cpp"}

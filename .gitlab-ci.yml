@@ -1,0 +1,11 @@
+image: python:2.7
+
+stages:
+ - test
+
+before_script:
+  - "pip install -U platformio"
+
+job:
+  stage: test
+  script: "platformio ci --board=esp01_1m --board=esp12e --board=esp01 --board=esp07 --board=d1"

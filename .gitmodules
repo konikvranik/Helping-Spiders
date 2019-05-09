@@ -1,6 +1,3 @@
-[submodule "lib/RGBLEDBlender"]
-	path = lib/RGBLEDBlender
-	url = git@github.com:konikvranik/RGBLEDBlender.git
 [submodule "RGBLEDBlender"]
 	path = RGB/RGBLEDBlender
 	url = https://github.com/konikvranik/RGBLEDBlender.git

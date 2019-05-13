@@ -42,7 +42,7 @@ void DS18Component::setup()
 
 void DS18Component::loop()
 {
-	yield;
+	yield();
 }
 
 void DS18Component::readTemps(JsonArray &jo)

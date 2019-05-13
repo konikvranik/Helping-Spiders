@@ -49,7 +49,7 @@ void StatusComponent::setup()
 		webServer->on("/reset", HTTP_GET, [&]() {
 			webServer->send(200, "text/plain", "Resetting...");
 			webServer->close();
-			yield;
+			yield();
 			delay(1000);
 			ESP.restart();
 		});

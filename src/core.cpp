@@ -69,12 +69,12 @@ void setup()
 	while (WiFi.waitForConnectResult() != WL_CONNECTED)
 	{
 		delay(100);
-		yield;
+		yield();
 	}
 	while (WiFi.localIP() == IPAddress(0U))
 	{
 		delay(100);
-		yield;
+		yield();
 	}
 
 	for (int i = 0; i < module_count; i++)

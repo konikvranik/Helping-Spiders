@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/konikvranik/Helping-Spiders.svg?branch=master)](https://travis-ci.org/konikvranik/Helping-Spiders)
+
 # Helping Spiders
 
 Platform for building customized arduino sensors/acutators to use with [Home Assistant](http://home-assistant.io).

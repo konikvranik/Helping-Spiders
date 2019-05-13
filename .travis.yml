@@ -38,5 +38,6 @@ install:
     - platformio update
 
 script:
+    - cp secrets.template.h secrets.h
     - platformio run
 

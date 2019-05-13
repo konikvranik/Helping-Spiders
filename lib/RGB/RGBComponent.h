@@ -8,7 +8,7 @@
 #ifndef RGBCOMPONENT_H_
 #define RGBCOMPONENT_H_
 
-#include "RGBLEDBlender.h"
+#include <RGBLEDBlender.h>
 #include "AbstractComponent.h"
 #include <Arduino.h>
 #include <TimeLib.h>

@@ -2,7 +2,7 @@
 #define CANDLE_INCLUDE_h
 
 #include <Arduino.h>
-#include "../../lib/RGBLEDBlender/src/Color/Color.h"
+#include <Color/Color.h>
 
 struct Candle {
 

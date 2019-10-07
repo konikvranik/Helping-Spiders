@@ -28,7 +28,7 @@ float HcSr04Component::getDistance()
 {
 	if (lastRun == 0 || lastRun < millis() - delayMS)
 	{
-		float tmp = this->sensor->ping_cm() / 100.000;
+		float tmp = this->sensor->ping_cm(MAX_DISTANCE) / 100.000;
 		lastRun = millis();
 		if (tmp > 0)
 		{

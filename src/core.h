@@ -58,7 +58,7 @@ AbstractComponent *modules[] =
     {
         new OTAComponent(str(NODE_ID), &http_server),
 #ifdef ENABLE_RGB
-        new RGBComponent(RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
+        new RGBComponent(str(NODE_ID), RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
 #endif
 #ifdef ENABLE_IR
         new IRComponent(IR_CHILD_ID, IRRX_PIN, IRTX_PIN),

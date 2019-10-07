@@ -8,6 +8,10 @@
 #ifndef HC_SR_04_COMPONENT_H_
 #define HC_SR_04_COMPONENT_H_
 
+#ifndef MAX_DISTANCE
+#define MAX_DISTANCE
+#endif
+
 #include <Arduino.h>
 #include <NewPing.h>
 #include "AbstractDistanceComponent.h"

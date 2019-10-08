@@ -29,7 +29,6 @@ public:
   DHTComponent(const String node_id, const uint8_t, const uint8_t, const int16_t);
   virtual ~DHTComponent();
   virtual void setup();
-  virtual void loop();
   virtual double getHumidity();
   virtual double getTemperature();
   virtual void reportStatus(JsonObject &);

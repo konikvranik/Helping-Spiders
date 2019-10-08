@@ -100,6 +100,13 @@ void RGBComponent::loop()
 	}
 }
 
+void RGBComponent::registerRest(ESP8266WebServer *webServer)
+{
+	webServer->on(String("/rgb/" + this->sensor_id), HTTP_POST, [&]() {
+		webServer->send(200, "application/json; charset=utf-8", "OK");
+	});
+}
+
 void RGBComponent::receive(String topic, String data, bool cont)
 {
 	/*

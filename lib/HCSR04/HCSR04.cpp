@@ -22,6 +22,7 @@ void HcSr04Component::setup()
 
 void HcSr04Component::loop()
 {
+	yield();
 }
 
 float HcSr04Component::getDistance()

@@ -28,10 +28,6 @@ void DHTComponent::setup()
   this->sensor->begin();
 }
 
-void DHTComponent::loop()
-{
-}
-
 double DHTComponent::getHumidity()
 {
   return this->sensor->readHumidity();

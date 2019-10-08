@@ -46,7 +46,6 @@ public:
 	iLifeComponent(const String node_id, const uint8_t sensor_id, const uint16_t tx_pin,
 	bool inverted_tx = false);
 	virtual ~iLifeComponent();
-	virtual void setup();
 	virtual void loop();
 	virtual void receive(String topic, String data, bool cont);
 	virtual void reportStatus(JsonObject&);

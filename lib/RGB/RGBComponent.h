@@ -49,6 +49,7 @@ public:
   virtual void setup();
   virtual void loop();
   virtual void receive(String topic, String data, bool cont);
+  void registerRest(ESP8266WebServer*);
   virtual void reportStatus(JsonObject &);
   static const String c2s(const Color);
   static const Color h2c(const String);

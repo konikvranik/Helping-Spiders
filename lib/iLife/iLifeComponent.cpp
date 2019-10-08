@@ -101,9 +101,6 @@ void iLifeComponent::receive(String topic, String data, bool cont) {
 	*/
 }
 
-void iLifeComponent::setup() {
-}
-
 void iLifeComponent::loop() {
 	if (pos >= 0 && last_sent + seq[pos].d < millis()) {
 		irsend.begin();

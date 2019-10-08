@@ -42,7 +42,6 @@ class StatusComponent: public AbstractComponent {
 	virtual ~StatusComponent();
 	virtual void setup();
 	virtual void loop();
-	virtual void reportStatus(JsonObject &);
 	virtual String moduleName();
 	String prometheusReport();
 };

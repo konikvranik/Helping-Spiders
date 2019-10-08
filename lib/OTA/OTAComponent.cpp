@@ -61,10 +61,6 @@ void OTAComponent::setup()
 	ArduinoOTA.begin();
 }
 
-void OTAComponent::reportStatus(JsonObject &)
-{
-}
-
 String OTAComponent::moduleName()
 {
 	return "OTA";

@@ -158,10 +158,6 @@ void StatusComponent::loop()
 	}
 }
 
-void StatusComponent::reportStatus(JsonObject &)
-{
-}
-
 String StatusComponent::moduleName()
 {
 	return "status";

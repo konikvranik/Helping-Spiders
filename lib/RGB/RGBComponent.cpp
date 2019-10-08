@@ -53,49 +53,23 @@ void RGBComponent::sendMessage()
 
 void RGBComponent::loop()
 {
-	if (result)
+	if (!result && (result = rgbBlender.Update()))
 	{
 		switch (mode)
 		{
 		case MODE_CANDLE:
+			candle.Reset();
 			rgbBlender.Blend(rgbBlender.GetColor(), candle.color_list[candle.RandColor()], candle.RandTimer());
 			result = false;
 			break;
 		case MODE_DAYTIME:
-			const Color new_color = daytimeColor();
-			if (new_color != rgbBlender.GetColor())
-			{
-				rgbBlender.Blend(rgbBlender.GetColor(), new_color, BLEND_TIME);
-				result = false;
-			}
+			this->blend(daytimeColor());
+			break;
+		case MODE_DEFAULT:
+			if (light_state != LIGHT_ON)
+				rgbBlender.TurnOff();
 			break;
 		}
-	}
-	if (!result)
-	{
-		result = rgbBlender.Update();
-		if (result)
-		{
-			sendMessage();
-			switch (mode)
-			{
-			case MODE_CANDLE:
-				candle.Reset();
-				break;
-			case MODE_DEFAULT:
-				if (light_state == LIGHT_ON)
-					rgbBlender.Hold(rgb);
-				else
-					rgbBlender.TurnOff();
-				break;
-			}
-		}
-	}
-	unsigned long now = millis();
-	if (last_light_msg + MSG_PERIOD < now)
-	{
-		sendMessage();
-		last_light_msg = now;
 	}
 }
 
@@ -128,12 +102,12 @@ void RGBComponent::doOnRest()
 		if (req_mode == "candle")
 		{
 			this->mode = MODE_CANDLE;
-			result = true;
+			result = false;
 		}
 		else if (req_mode == "daytime")
 		{
 			this->mode = MODE_DAYTIME;
-			result = true;
+			result = false;
 		}
 		else if (req_mode == "normal")
 		{
@@ -173,7 +147,7 @@ void RGBComponent::doOnRest()
 		}
 		if (this->mode == MODE_DEFAULT)
 		{
-			blend(this->rgb);
+			this->blend(this->rgb);
 		}
 		this->webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":") + String(this->rgb.red) + String(", \"g\":") + String(this->rgb.green) + String(",\"b\":") + String(this->rgb.blue) + String(", \"mode\":\"") + String(this->mode) + String("\", \"state\":") + String(this->light_state));
 	}
@@ -312,10 +286,7 @@ const Color RGBComponent::daytimeColor()
 void RGBComponent::blend(Color c)
 {
 	// If last dimmer state is zero, set dimmer to 100
-	if (light_state == LIGHT_ON)
-	{
-	}
-	else
+	if (light_state != LIGHT_ON)
 	{
 		mode = MODE_DEFAULT;
 		c = _BLACK;

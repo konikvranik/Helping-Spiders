@@ -104,27 +104,6 @@ void RGBComponent::registerRest(ESP8266WebServer *webServer)
 {
 	webServer->on(String("/rgb/" + this->sensor_id), HTTP_GET, [&]() {
 		bool fail = false;
-		Color color = Color(this->rgb.red, this->rgb.green, this->rgb.blue);
-		if (webServer->hasArg("color"))
-		{
-			color = h2c(webServer->arg("color"));
-		}
-		if (webServer->hasArg("red"))
-		{
-			color.red = webServer->arg("red").toInt();
-		}
-		if (webServer->hasArg("green"))
-		{
-			color.green = webServer->arg("green").toInt();
-		}
-		if (webServer->hasArg("blue"))
-		{
-			color.blue = webServer->arg("blue").toInt();
-		}
-		if (webServer->hasArg("intensity"))
-		{
-			color = b2c(color, webServer->arg("intensity").toInt());
-		}
 		if (webServer->hasArg("state"))
 		{
 			const char *state = webServer->arg("state").c_str();
@@ -147,15 +126,16 @@ void RGBComponent::registerRest(ESP8266WebServer *webServer)
 			if (strcmp(req_mode, "candle") == 0)
 			{
 				this->mode = MODE_CANDLE;
+				result = true;
 			}
 			else if (strcmp(req_mode, "daytime") == 0)
 			{
 				this->mode = MODE_DAYTIME;
+				result = true;
 			}
 			else if (strcmp(req_mode, "normal") == 0)
 			{
 				this->mode = MODE_DEFAULT;
-				blend(color);
 			}
 			else
 			{
@@ -168,7 +148,31 @@ void RGBComponent::registerRest(ESP8266WebServer *webServer)
 		}
 		else
 		{
-			webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + this->rgb.red) + String(", \"g\":" + this->rgb.green) + String(",\"b\":" + this->rgb.blue));
+			if (webServer->hasArg("color"))
+			{
+				this->rgb = h2c(webServer->arg("color"));
+			}
+			if (webServer->hasArg("red"))
+			{
+				this->rgb.red = webServer->arg("red").toInt();
+			}
+			if (webServer->hasArg("green"))
+			{
+				this->rgb.green = webServer->arg("green").toInt();
+			}
+			if (webServer->hasArg("blue"))
+			{
+				this->rgb.blue = webServer->arg("blue").toInt();
+			}
+			if (webServer->hasArg("intensity"))
+			{
+				this->rgb = b2c(this->rgb, webServer->arg("intensity").toInt());
+			}
+			if (this->mode == MODE_DEFAULT)
+			{
+				blend(this->rgb);
+			}
+			webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + this->rgb.red) + String(", \"g\":" + this->rgb.green) + String(",\"b\":" + this->rgb.blue) + String(", \"mode\":\"" + this->mode) + String("\", \"state\":" + this->light_state));
 		}
 	});
 }

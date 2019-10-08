@@ -58,8 +58,7 @@ void RGBComponent::loop()
 		switch (mode)
 		{
 		case MODE_CANDLE:
-			rgbBlender.Blend(rgbBlender.GetColor(),
-							 candle.color_list[candle.RandColor()], candle.RandTimer());
+			rgbBlender.Blend(rgbBlender.GetColor(), candle.color_list[candle.RandColor()], candle.RandTimer());
 			result = false;
 			break;
 		case MODE_DAYTIME:
@@ -258,24 +257,21 @@ void RGBComponent::receive(String topic, String data, bool cont)
 }
 */
 
-const String RGBComponent::c2s(const Color color)
+String RGBComponent::c2s(const Color color)
 {
-	const char *fmt = "%06x";
-	long clr = color.red * 0x10000 + color.green * 0x100 + color.blue;
-	char c1[1];
-	int sz = snprintf(c1, 0, fmt, clr);
-	char c[sz + 2];
-	sprintf(c, fmt, clr);
-	return String(c);
+	String result = String(color.red, HEX) + ":";
+	result.concat(String(color.green, HEX) + ":");
+	result.concat(String(color.blue, HEX));
+	return result;
 }
 
 const Color RGBComponent::h2c(const String rgb)
 {
 	long int color = strtol(rgb.c_str(), NULL, 16);
-	int16_t blue = int16_t((color % 0x100) * RGB_MAX_VALUE / 0x100);
+	int16_t blue = int16_t(color % 0x100);
 	color = color / 0x100;
-	int16_t green = int16_t((color % 0x100) * RGB_MAX_VALUE / 0x100);
-	int16_t red = int16_t(color / 0x100 * RGB_MAX_VALUE / 0x100);
+	int16_t green = int16_t(color % 0x100);
+	int16_t red = int16_t(color / 0x100);
 	return Color(red, green, blue);
 }
 

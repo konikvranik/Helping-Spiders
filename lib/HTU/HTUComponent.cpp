@@ -9,7 +9,7 @@
 
 HTUComponent::HTUComponent(const String node_id, const uint8_t sensor_id, const uint8_t hum_sensor_id,
                            const uint8_t scl, const uint8_t sda)
-    : AbstractComponent(node_id, sensor_id), hum_sensor_id(hum_sensor_id), sda(sda), scl(scl)
+    : AbstractComponent(node_id, sensor_id), sda(sda), scl(scl), hum_sensor_id(hum_sensor_id)
 {
 }
 

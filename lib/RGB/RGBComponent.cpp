@@ -10,7 +10,7 @@
 // RGBComponent::mode_names = { "normal", "daytime", "candle" };
 
 RGBComponent::RGBComponent(const String node_id, const uint8_t sensor_id, const uint16_t red_pin,
-						   const uint16_t green_pin, const uint16_t blue_pin) : rgbBlender(red_pin, green_pin, blue_pin), AbstractComponent(node_id, sensor_id)
+						   const uint16_t green_pin, const uint16_t blue_pin) : AbstractComponent(node_id, sensor_id), rgbBlender(red_pin, green_pin, blue_pin)
 {
 }
 

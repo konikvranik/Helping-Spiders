@@ -8,22 +8,24 @@
 #include "iLifeComponent.h"
 
 iLifeComponent::iLifeComponent(const String node_id, const uint8_t sensor_id, const uint16_t tx_pin,
-bool inverted_tx) :
-		irsend(tx_pin, inverted_tx), AbstractComponent(node_id, sensor_id) {
+							   bool inverted_tx) : AbstractComponent(node_id, sensor_id), irsend(tx_pin, inverted_tx)
+{
 	pinMode(tx_pin, OUTPUT);
 	digitalWrite(tx_pin, inverted_tx ? HIGH : LOW);
 }
 
-iLifeComponent::~iLifeComponent() {
-
+iLifeComponent::~iLifeComponent()
+{
 }
 
-static code* singleCode(int c) {
-	static code sq[] = { { 0, c } };
+static code *singleCode(uint32_t c)
+{
+	static code sq[] = {{0, c}};
 	return sq;
 }
 
-void iLifeComponent::receive(String topic, String data, bool cont) {
+void iLifeComponent::receive(String topic, String data, bool cont)
+{
 	/*
 	String topicPrefix = makeTopic("");
 	if (pos < 0) {
@@ -101,36 +103,43 @@ void iLifeComponent::receive(String topic, String data, bool cont) {
 	*/
 }
 
-void iLifeComponent::loop() {
-	if (pos >= 0 && last_sent + seq[pos].d < millis()) {
+void iLifeComponent::loop()
+{
+	if (pos >= 0 && last_sent + seq[pos].d < millis())
+	{
 		irsend.begin();
 		irsend.sendNEC(seq[pos].c, 32);
 		last_sent = millis();
 		pos++;
 	}
-	if (pos >= len) {
+	if (pos >= len)
+	{
 		pos = -1;
 	}
 }
 
-String iLifeComponent::seq2s() {
+String iLifeComponent::seq2s()
+{
 	String st = "";
-	for (uint8_t i = 0; i < len; i++) {
+	for (uint8_t i = 0; i < len; i++)
+	{
 		st += String(seq[i].d) + "->" + String(seq[i].c) + ", ";
 	}
 	return st;
 }
 
-void iLifeComponent::reportStatus(JsonObject& jo) {
+void iLifeComponent::reportStatus(JsonObject &jo)
+{
 	jo["ID"] = this->sensor_id;
 	jo["State"] =
-			this->status == 1 ? "ON" : (this->status == 0 ? "OFF" : "UNKNOWN");
+		this->status == 1 ? "ON" : (this->status == 0 ? "OFF" : "UNKNOWN");
 	jo["Command"] = ir_code;
 	jo["Sequence"] = this->seq2s();
 	jo["Len"] = this->len;
 	jo["Pos"] = this->pos;
 }
 
-String iLifeComponent::moduleName() {
+String iLifeComponent::moduleName()
+{
 	return "iLife";
 }

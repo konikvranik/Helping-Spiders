@@ -8,24 +8,27 @@
 #include "IRComponent.h"
 
 IRComponent::IRComponent(const String node_id, const uint8_t sensor_id, const uint16_t rx_pin,
-		const uint16_t tx_pin, bool inverted_tx) :
-		irrecv(rx_pin), irsend(tx_pin, inverted_tx), AbstractComponent(node_id,
-				sensor_id) {
+						 const uint16_t tx_pin, bool inverted_tx) : AbstractComponent(node_id, sensor_id),
+																	irrecv(rx_pin), irsend(tx_pin, inverted_tx)
+{
 	pinMode(tx_pin, OUTPUT);
 	pinMode(rx_pin, INPUT);
 	digitalWrite(tx_pin, inverted_tx ? HIGH : LOW);
 }
 
-IRComponent::~IRComponent() {
+IRComponent::~IRComponent()
+{
 	// TODO Auto-generated destructor stub
 }
 
-void IRComponent::setup() {
+void IRComponent::setup()
+{
 	// Start the ir receiver
 	irrecv.enableIRIn();
 }
 
-void IRComponent::receive(String topic, String data, bool cont) {
+void IRComponent::receive(String topic, String data, bool cont)
+{
 	/*
 	if (message.sensor != sensor_id)
 		return;
@@ -50,21 +53,25 @@ void IRComponent::receive(String topic, String data, bool cont) {
 	*/
 }
 
-void IRComponent::loop() {
+void IRComponent::loop()
+{
 	decode_results ircode;
-	if (irrecv.decode(&ircode)) {
-		decode_type_t decodeType = (decode_type_t) ircode.decode_type;
+	if (irrecv.decode(&ircode))
+	{
+		decode_type_t decodeType = (decode_type_t)ircode.decode_type;
 		this->receivedCode = ircode.value;
 		irrecv.resume();
 	}
 }
 
-void IRComponent::reportStatus(JsonObject& jo) {
+void IRComponent::reportStatus(JsonObject &jo)
+{
 	jo["ID"] = this->sensor_id;
 	jo["Received"] = this->receivedCode;
 	jo["Send"] = this->sentCode;
 }
 
-String IRComponent::moduleName() {
+String IRComponent::moduleName()
+{
 	return "IR";
 }

@@ -33,8 +33,8 @@
 #define DAYTIMECOLOR Color(238, 12, 0)
 
 class RGBComponent : public virtual AbstractComponent {
-  uint32_t last_light_msg = millis();
   RGBLEDBlender rgbBlender;
+  uint32_t last_light_msg = millis();
   void blend(Color c);
   void sendMessage();
 

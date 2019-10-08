@@ -155,21 +155,21 @@ void RGBComponent::doOnRest()
 		{
 			this->rgb = h2c(this->webServer->arg("color"));
 		}
-		if (this->webServer->hasArg("red"))
+		if (this->webServer->hasArg("r"))
 		{
-			this->rgb.red = this->webServer->arg("red").toInt();
+			this->rgb.red = this->webServer->arg("r").toInt();
 		}
-		if (this->webServer->hasArg("green"))
+		if (this->webServer->hasArg("g"))
 		{
-			this->rgb.green = this->webServer->arg("green").toInt();
+			this->rgb.green = this->webServer->arg("g").toInt();
 		}
-		if (this->webServer->hasArg("blue"))
+		if (this->webServer->hasArg("b"))
 		{
-			this->rgb.blue = this->webServer->arg("blue").toInt();
+			this->rgb.blue = this->webServer->arg("b").toInt();
 		}
-		if (this->webServer->hasArg("intensity"))
+		if (this->webServer->hasArg("brightness"))
 		{
-			this->rgb = b2c(this->rgb, this->webServer->arg("intensity").toInt());
+			this->rgb = b2c(this->rgb, this->webServer->arg("brightness").toInt());
 		}
 		if (this->mode == MODE_DEFAULT)
 		{

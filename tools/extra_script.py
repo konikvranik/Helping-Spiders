@@ -1,14 +1,14 @@
-from platformio import util
-from SCons.Script import AlwaysBuild
-from decoder import ExceptionDataParser
-from decoder import AddressResolver
-from decoder import print_result
+import os
+from os.path import join
+
+from decoder import ExceptionDataParser, parse_args, AddressResolver, print_result, PLATFORMS
+
 Import("env")
 
-config = util.load_project_config()
 
-def decode():
-    args = parse_args()
+def decode(*args, **kwargs):
+    stack_only = False
+    full = True
 
     file = open(".pioenvs/stack.dump", "r")
 
@@ -26,9 +26,10 @@ def decode():
     parser = ExceptionDataParser()
     resolver = AddressResolver(addr2line, elf_file)
 
-    parser.parse_file(file, args.stack_only)
+    parser.parse_file(file, stack_only)
     resolver.fill(parser)
 
-    print_result(parser, resolver, args.full, args.stack_only)
+    print_result(parser, resolver, full, stack_only)
 
-AlwaysBuild(env.Alias("decode", "", decode))
+
+env.AlwaysBuild(env.Alias("decode", None, decode))

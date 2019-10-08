@@ -103,73 +103,147 @@ void RGBComponent::loop()
 void RGBComponent::registerRest(ESP8266WebServer *webServer)
 {
 	webServer->on(String("/rgb/" + this->sensor_id), HTTP_GET, [&]() {
-		Color c = h2c(webServer->arg("color"));
-		blend(c);
-		webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + c.red) + String(", \"g\":" + c.green) + String(",\"b\":" + c.blue));
+		bool fail = false;
+		Color color = Color(this->rgb.red, this->rgb.green, this->rgb.blue);
+		if (webServer->hasArg("color"))
+		{
+			color = h2c(webServer->arg("color"));
+		}
+		if (webServer->hasArg("red"))
+		{
+			color.red = webServer->arg("red").toInt();
+		}
+		if (webServer->hasArg("green"))
+		{
+			color.green = webServer->arg("green").toInt();
+		}
+		if (webServer->hasArg("blue"))
+		{
+			color.blue = webServer->arg("blue").toInt();
+		}
+		if (webServer->hasArg("intensity"))
+		{
+			color = b2c(color, webServer->arg("intensity").toInt());
+		}
+		if (webServer->hasArg("state"))
+		{
+			const char *state = webServer->arg("state").c_str();
+			if (strcmp(state, "on") == 0)
+			{
+				this->light_state = LIGHT_ON;
+			}
+			else if (strcmp(state, "off") == 0)
+			{
+				this->light_state = LIGHT_OFF;
+			}
+			else
+			{
+				fail = true;
+			}
+		}
+		if (!fail && webServer->hasArg("mode"))
+		{
+			const char *req_mode = webServer->arg("mode").c_str();
+			if (strcmp(req_mode, "candle") == 0)
+			{
+				this->mode = MODE_CANDLE;
+			}
+			else if (strcmp(req_mode, "daytime") == 0)
+			{
+				this->mode = MODE_DAYTIME;
+			}
+			else if (strcmp(req_mode, "normal") == 0)
+			{
+				this->mode = MODE_DEFAULT;
+				blend(color);
+			}
+			else
+			{
+				fail = true;
+			}
+		}
+		if (fail)
+		{
+			webServer->send(400, "application/json; charset=utf-8", String("{ \"error\":\"wrong parameter\" }"));
+		}
+		else
+		{
+			webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + this->rgb.red) + String(", \"g\":" + this->rgb.green) + String(",\"b\":" + this->rgb.blue));
+		}
 	});
 }
 
+/*
 void RGBComponent::receive(String topic, String data, bool cont)
 {
-	/*
 
-	 uint16_t int_val = message.getInt();
-	 const char *str_val = message.getString();
-	 char *cust_val = (char *)message.getCustom();
-	 switch (message.type) {
-	 case V_STATUS:
-	 Log.notice("V_STATUS command received: %d (%s)" CR, int_val,
-	 c2s(rgb).c_str());
-	 if ((int_val < 0) || (int_val > 1)) {
-	 Log.warning("V_STATUS data invalid (should be 0/1)" CR);
-	 return;
-	 }
-	 if (light_state != int_val && int_val == LIGHT_ON) {
-	 mode = MODE_DAYTIME;
-	 }
-	 light_state = int_val;
-	 if (mode == MODE_DEFAULT || light_state == 0) {
-	 blend(rgb);
-	 } else {
-	 result = true;
-	 }
-	 break;
-	 case V_PERCENTAGE:
-	 Log.notice("V_PERCENTAGE command received: %d (%s)" CR, int_val,
-	 c2s(rgb).c_str());
-	 if (mode == MODE_UNDEF)
-	 break;
-	 int_val = constrain(int_val, 0, 100);
-	 mode = MODE_DEFAULT;
-	 rgb = b2c(rgb, int_val);
-	 blend(rgb);
-	 break;
-	 case V_RGB:
-	 Log.notice("V_RGB command received: %s" CR, str_val);
-	 if (mode == MODE_UNDEF)
-	 break;
-	 mode = MODE_DEFAULT;
-	 rgb = h2c(str_val);
-	 blend(rgb);
-	 break;
-	 case V_TEXT:
-	 Log.notice("V_TEXT command received: %s" CR, cust_val);
-	 if (mode == MODE_UNDEF)
-	 break;
-	 if (strcmp(cust_val, "candle") == 0) {
-	 mode = MODE_CANDLE;
-	 result = true;
-	 } else if (strcmp(cust_val, "daytime") == 0) {
-	 mode = MODE_DAYTIME;
-	 result = true;
-	 } else if (strcmp(cust_val, "normal") == 0) {
-	 mode = MODE_DEFAULT;
-	 blend(rgb);
-	 }
-	 break;
-	 }
-	 */
+	uint16_t int_val = message.getInt();
+	const char *str_val = message.getString();
+	char *cust_val = (char *)message.getCustom();
+	switch (message.type)
+	{
+	case V_STATUS:
+		Log.notice("V_STATUS command received: %d (%s)" CR, int_val, c2s(rgb).c_str());
+		if ((int_val < 0) || (int_val > 1))
+		{
+			Log.warning("V_STATUS data invalid (should be 0/1)" CR);
+			return;
+		}
+		if (light_state != int_val && int_val == LIGHT_ON)
+		{
+			mode = MODE_DAYTIME;
+		}
+		light_state = int_val;
+		if (mode == MODE_DEFAULT || light_state == 0)
+		{
+			blend(rgb);
+		}
+		else
+		{
+			result = true;
+		}
+		break;
+	case V_PERCENTAGE:
+		Log.notice("V_PERCENTAGE command received: %d (%s)" CR, int_val,
+				   c2s(rgb).c_str());
+		if (mode == MODE_UNDEF)
+			break;
+		int_val = constrain(int_val, 0, 100);
+		mode = MODE_DEFAULT;
+		rgb = b2c(rgb, int_val);
+		blend(rgb);
+		break;
+	case V_RGB:
+		Log.notice("V_RGB command received: %s" CR, str_val);
+		if (mode == MODE_UNDEF)
+			break;
+		mode = MODE_DEFAULT;
+		rgb = h2c(str_val);
+		blend(rgb);
+		break;
+	case V_TEXT:
+		Log.notice("V_TEXT command received: %s" CR, cust_val);
+		if (mode == MODE_UNDEF)
+			break;
+		if (strcmp(cust_val, "candle") == 0)
+		{
+			mode = MODE_CANDLE;
+			result = true;
+		}
+		else if (strcmp(cust_val, "daytime") == 0)
+		{
+			mode = MODE_DAYTIME;
+			result = true;
+		}
+		else if (strcmp(cust_val, "normal") == 0)
+		{
+			mode = MODE_DEFAULT;
+			blend(rgb);
+		}
+		break;
+	}
 }
+*/
 
 const String RGBComponent::c2s(const Color color)
 {

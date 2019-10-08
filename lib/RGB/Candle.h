@@ -12,6 +12,7 @@ struct Candle
   uint16_t vary;
   uint8_t rand_color;
   uint16_t timer;
+  
   static const uint8_t s = 7;
   Color color_list[s] = {{255, 235, 50}, {145, 64, 30}, {225, 105, 40}, {235, 205, 12}, {128, 95, 50}, {64, 50, 20}, {255, 127, 0}};
 

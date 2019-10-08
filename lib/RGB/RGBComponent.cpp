@@ -102,8 +102,10 @@ void RGBComponent::loop()
 
 void RGBComponent::registerRest(ESP8266WebServer *webServer)
 {
-	webServer->on(String("/rgb/" + this->sensor_id), HTTP_POST, [&]() {
-		webServer->send(200, "application/json; charset=utf-8", "OK");
+	webServer->on(String("/rgb/" + this->sensor_id), HTTP_GET, [&]() {
+		Color c = h2c(webServer->arg("color"));
+		blend(c);
+		webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + c.red) + String(", \"g\":" + c.green) + String(",\"b\":" + c.blue));
 	});
 }
 

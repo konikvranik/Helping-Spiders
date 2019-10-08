@@ -43,10 +43,4 @@ public:
 	virtual String moduleName() = 0;
 };
 
-/*
- String AbstractComponent::prometheus() {
- return "none{} 0" CR;
- }
- */
-
 #endif /* ABSTRACT_COMPONENT_H_ */

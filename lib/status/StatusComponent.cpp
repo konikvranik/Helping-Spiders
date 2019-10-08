@@ -53,6 +53,10 @@ void StatusComponent::setup()
 			delay(1000);
 			ESP.restart();
 		});
+		for (int i = 0; i < this->components_count; i++)
+		{
+			this->components[i]->registerRest(*webServer);
+		}
 	}
 }
 

@@ -100,81 +100,90 @@ void RGBComponent::loop()
 	}
 }
 
-void RGBComponent::registerRest(ESP8266WebServer *webServer)
+void RGBComponent::doOnRest()
 {
-	webServer->on(String("/rgb/" + this->sensor_id), HTTP_GET, [&]() {
-		bool fail = false;
-		if (webServer->hasArg("state"))
+	bool fail = false;
+	if (this->webServer == nullptr)
+	{
+		return;
+	}
+	if (this->webServer->hasArg("state"))
+	{
+		String state = this->webServer->arg("state");
+		if (state == "on")
 		{
-			const char *state = webServer->arg("state").c_str();
-			if (strcmp(state, "on") == 0)
-			{
-				this->light_state = LIGHT_ON;
-			}
-			else if (strcmp(state, "off") == 0)
-			{
-				this->light_state = LIGHT_OFF;
-			}
-			else
-			{
-				fail = true;
-			}
+			this->light_state = LIGHT_ON;
 		}
-		if (!fail && webServer->hasArg("mode"))
+		else if (state == "off")
 		{
-			const char *req_mode = webServer->arg("mode").c_str();
-			if (strcmp(req_mode, "candle") == 0)
-			{
-				this->mode = MODE_CANDLE;
-				result = true;
-			}
-			else if (strcmp(req_mode, "daytime") == 0)
-			{
-				this->mode = MODE_DAYTIME;
-				result = true;
-			}
-			else if (strcmp(req_mode, "normal") == 0)
-			{
-				this->mode = MODE_DEFAULT;
-			}
-			else
-			{
-				fail = true;
-			}
-		}
-		if (fail)
-		{
-			webServer->send(400, "application/json; charset=utf-8", String("{ \"error\":\"wrong parameter\" }"));
+			this->light_state = LIGHT_OFF;
 		}
 		else
 		{
-			if (webServer->hasArg("color"))
-			{
-				this->rgb = h2c(webServer->arg("color"));
-			}
-			if (webServer->hasArg("red"))
-			{
-				this->rgb.red = webServer->arg("red").toInt();
-			}
-			if (webServer->hasArg("green"))
-			{
-				this->rgb.green = webServer->arg("green").toInt();
-			}
-			if (webServer->hasArg("blue"))
-			{
-				this->rgb.blue = webServer->arg("blue").toInt();
-			}
-			if (webServer->hasArg("intensity"))
-			{
-				this->rgb = b2c(this->rgb, webServer->arg("intensity").toInt());
-			}
-			if (this->mode == MODE_DEFAULT)
-			{
-				blend(this->rgb);
-			}
-			webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":" + this->rgb.red) + String(", \"g\":" + this->rgb.green) + String(",\"b\":" + this->rgb.blue) + String(", \"mode\":\"" + this->mode) + String("\", \"state\":" + this->light_state));
+			fail = true;
 		}
-	});
+	}
+	if (!fail && this->webServer->hasArg("mode"))
+	{
+		String req_mode = this->webServer->arg("mode");
+		if (req_mode == "candle")
+		{
+			this->mode = MODE_CANDLE;
+			result = true;
+		}
+		else if (req_mode == "daytime")
+		{
+			this->mode = MODE_DAYTIME;
+			result = true;
+		}
+		else if (req_mode == "normal")
+		{
+			this->mode = MODE_DEFAULT;
+		}
+		else
+		{
+			fail = true;
+		}
+	}
+
+	if (fail)
+	{
+		this->webServer->send(400, "application/json; charset=utf-8", "{ \"error\":\"wrong parameter\" }");
+	}
+	else
+	{
+		if (this->webServer->hasArg("color"))
+		{
+			this->rgb = h2c(this->webServer->arg("color"));
+		}
+		if (this->webServer->hasArg("red"))
+		{
+			this->rgb.red = this->webServer->arg("red").toInt();
+		}
+		if (this->webServer->hasArg("green"))
+		{
+			this->rgb.green = this->webServer->arg("green").toInt();
+		}
+		if (this->webServer->hasArg("blue"))
+		{
+			this->rgb.blue = this->webServer->arg("blue").toInt();
+		}
+		if (this->webServer->hasArg("intensity"))
+		{
+			this->rgb = b2c(this->rgb, this->webServer->arg("intensity").toInt());
+		}
+		if (this->mode == MODE_DEFAULT)
+		{
+			blend(this->rgb);
+		}
+		this->webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":") + String(this->rgb.red) + String(", \"g\":") + String(this->rgb.green) + String(",\"b\":") + String(this->rgb.blue) + String(", \"mode\":\"") + String(this->mode) + String("\", \"state\":") + String(this->light_state));
+	}
+}
+
+void RGBComponent::registerRest(ESP8266WebServer &webServer)
+{
+	webServer.on(String("/rgb/") + String(this->sensor_id), HTTP_GET, std::bind(&RGBComponent::doOnRest, this));
+	this->webServer = &webServer;
 }
 
 /*
@@ -252,7 +261,7 @@ void RGBComponent::receive(String topic, String data, bool cont)
 const String RGBComponent::c2s(const Color color)
 {
 	const char *fmt = "%06x";
-	long clr = color.red * 0x10000 * 0x100 / RGB_MAX_VALUE + color.green * 0x100 * 0x100 / RGB_MAX_VALUE + color.blue * 0x100 / RGB_MAX_VALUE;
+	long clr = color.red * 0x10000 + color.green * 0x100 + color.blue;
 	char c1[1];
 	int sz = snprintf(c1, 0, fmt, clr);
 	char c[sz + 2];
@@ -263,19 +272,21 @@ const String RGBComponent::c2s(const Color color)
 const Color RGBComponent::h2c(const String rgb)
 {
 	long int color = strtol(rgb.c_str(), NULL, 16);
-	int16_t blue = (int16_t)((color % 0x100) * RGB_MAX_VALUE / 0x100);
+	int16_t blue = int16_t((color % 0x100) * RGB_MAX_VALUE / 0x100);
 	color = color / 0x100;
-	int16_t green = (int16_t)((color % 0x100) * RGB_MAX_VALUE / 0x100);
-	int16_t red = (int16_t)(color / 0x100 * RGB_MAX_VALUE / 0x100);
+	int16_t green = int16_t((color % 0x100) * RGB_MAX_VALUE / 0x100);
+	int16_t red = int16_t(color / 0x100 * RGB_MAX_VALUE / 0x100);
 	return Color(red, green, blue);
+}
+
+int16_t colorRange(int16_t color)
+{
+	return color < 0 ? 0 : ((color > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : color);
 }
 
 const Color RGBComponent::cn(Color rgb)
 {
-	return Color(
-		rgb.red < 0 ? 0 : (rgb.red > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.red,
-		rgb.green < 0 ? 0 : (rgb.green > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.green,
-		rgb.blue < 0 ? 0 : (rgb.blue > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : rgb.blue);
+	return Color(colorRange(rgb.red), colorRange(rgb.green), colorRange(rgb.blue));
 }
 
 const int16_t RGBComponent::c2b(const Color c)

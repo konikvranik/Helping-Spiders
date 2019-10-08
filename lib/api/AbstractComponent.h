@@ -35,7 +35,7 @@ public:
 		return node_id + String("/") + String(this->sensor_id) + String("/") + getType() + String("/") + suffix;
 	}
 	virtual void reportStatus(JsonObject &){};
-	virtual void registerRest(ESP8266WebServer *){};
+	virtual void registerRest(ESP8266WebServer &){};
 	virtual String prometheus()
 	{
 		return "";

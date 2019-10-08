@@ -32,10 +32,13 @@
 
 #define DAYTIMECOLOR Color(238, 12, 0)
 
-class RGBComponent : public virtual AbstractComponent {
+class RGBComponent : public virtual AbstractComponent
+{
   RGBLEDBlender rgbBlender;
   uint32_t last_light_msg = millis();
+  ESP8266WebServer *webServer = nullptr;
   void blend(Color c);
+  void doOnRest();
   void sendMessage();
 
 public:
@@ -49,7 +52,7 @@ public:
   virtual void setup();
   virtual void loop();
   //virtual void receive(String topic, String data, bool cont);
-  void registerRest(ESP8266WebServer*);
+  void registerRest(ESP8266WebServer &);
   virtual void reportStatus(JsonObject &);
   static const String c2s(const Color);
   static const Color h2c(const String);

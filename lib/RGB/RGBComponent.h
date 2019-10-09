@@ -34,21 +34,20 @@ class RGBComponent : public virtual AbstractComponent
 {
   uint32_t last_light_msg = millis();
   ESP8266WebServer *webServer = nullptr;
-  uint32_t last_render;
-  uint32_t render_finish;
+  uint32_t last_render = 0;
+  uint32_t render_finish = 0;
   Color current_color;
   Color desired_color = _BLACK;
   const uint8_t red_pin;
   const uint8_t green_pin;
   const uint8_t blue_pin;
+  Candle candle;
 
   void blend(Color c);
   void doOnRest();
   void sendMessage();
 
 public:
-  Candle candle;
-  bool result = true;
   uint8_t mode = MODE_UNDEF;
   int16_t light_state = LIGHT_OFF;
   Color rgb = _BLACK;

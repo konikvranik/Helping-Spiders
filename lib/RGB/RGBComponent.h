@@ -8,7 +8,8 @@
 #ifndef RGBCOMPONENT_H_
 #define RGBCOMPONENT_H_
 
-#include <RGBLEDBlender.h>
+#include "Color.h"
+#include "Colors.h"
 #include "AbstractComponent.h"
 #include <Arduino.h>
 #include <TimeLib.h>
@@ -27,16 +28,20 @@
 #define LIGHT_OFF 0
 #define LIGHT_ON 1
 
-#define RGB_MAX_VALUE 0x100
-#define BRIGHTNESS_MAX_VALUE 100
-
 #define DAYTIMECOLOR Color(238, 12, 0)
 
 class RGBComponent : public virtual AbstractComponent
 {
-  RGBLEDBlender rgbBlender;
   uint32_t last_light_msg = millis();
   ESP8266WebServer *webServer = nullptr;
+  uint32_t last_render;
+  uint32_t render_finish;
+  Color current_color;
+  Color desired_color = _BLACK;
+  const uint8_t red_pin;
+  const uint8_t green_pin;
+  const uint8_t blue_pin;
+
   void blend(Color c);
   void doOnRest();
   void sendMessage();
@@ -54,15 +59,12 @@ public:
   //virtual void receive(String topic, String data, bool cont);
   void registerRest(ESP8266WebServer &);
   virtual void reportStatus(JsonObject &);
-  static String c2s(const Color);
   static const Color h2c(const String);
   static const Color cn(Color rgb);
-  static const int16_t c2b(const Color);
-  static const Color b2c(Color rgb, const int16_t);
   static const Color daytimeColor();
   const String getModeName();
-  const Color getColor();
   virtual String moduleName();
+  virtual void updateCandle();
 };
 
 #endif /* RGBCOMPONENT_H_ */

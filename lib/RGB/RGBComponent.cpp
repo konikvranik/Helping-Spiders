@@ -10,9 +10,7 @@
 // RGBComponent::mode_names = { "normal", "daytime", "candle" };
 
 RGBComponent::RGBComponent(const String node_id, const uint8_t sensor_id, const uint16_t red_pin,
-						   const uint16_t green_pin, const uint16_t blue_pin) : AbstractComponent(node_id, sensor_id), rgbBlender(red_pin, green_pin, blue_pin)
-{
-}
+						   const uint16_t green_pin, const uint16_t blue_pin) : AbstractComponent(node_id, sensor_id), red_pin(red_pin), green_pin(green_pin), blue_pin(blue_pin) {}
 
 RGBComponent::~RGBComponent()
 {
@@ -33,68 +31,54 @@ const String RGBComponent::getModeName()
 	return "UNKNOWN";
 }
 
-void RGBComponent::sendMessage()
-{
-	/*
-	 send(light_status_msg.set((int16_t)(light_state == LIGHT_ON ? 1 : 0)));
-	 if (light_state == LIGHT_ON) {
-	 send(dimmer_msg.set(c2b(rgbBlender.GetColor())));
-	 send(rgb_msg.set(c2s(rgbBlender.GetColor()).c_str()));
-	 send(mode_msg.set(getModeName()));
-	 }
-	 Log.notice("message: state %d, dimm %d, color %s, mode: %d, result: %T" CR,
-	 light_state, c2b(rgbBlender.GetColor()),
-	 c2s(rgbBlender.GetColor()).c_str(), mode, result);
-	 Log.notice("    rgb: state %d, dimm %d, color %s, mode: %d, result: %T" CR,
-	 light_state, c2b(rgbBlender.GetColor()),
-	 c2s(rgbBlender.GetColor()).c_str(), mode, result);
-	 */
-}
-
 void RGBComponent::loop()
 {
-	if (!result && (result = rgbBlender.Update()))
-	{
-		switch (mode)
+	uint32_t now = millis();
+	uint16_t remaining = this->render_finish - now;
+	if (remaining <= 0)
+		switch (this->mode)
 		{
-		case MODE_CANDLE:
-			candle.Reset();
-			rgbBlender.Blend(rgbBlender.GetColor(), candle.color_list[candle.RandColor()], candle.RandTimer());
-			result = false;
-			break;
 		case MODE_DAYTIME:
-			this->blend(daytimeColor());
+			this->blend(this->daytimeColor());
 			break;
-		case MODE_DEFAULT:
-			if (light_state != LIGHT_ON)
-				rgbBlender.TurnOff();
+		case MODE_CANDLE:
+			this->updateCandle();
 			break;
 		}
+
+	if (this->current_color == this->desired_color)
+		return;
+	if (remaining > 0)
+	{
+		uint16_t l = (this->render_finish - this->last_render);
+		this->current_color = (this->desired_color - this->current_color) * (1 - remaining / l);
+		this->last_render = now;
 	}
+	else
+	{
+		this->current_color = this->desired_color;
+	}
+	analogWrite(this->red_pin, this->current_color.red);
+	analogWrite(this->green_pin, this->current_color.green);
+	analogWrite(this->blue_pin, this->current_color.blue);
 }
 
 void RGBComponent::doOnRest()
 {
+	if (this->mode == MODE_UNDEF)
+		this->mode = MODE_DEFAULT;
 	bool fail = false;
 	if (this->webServer == nullptr)
-	{
 		return;
-	}
 	if (this->webServer->hasArg("state"))
 	{
 		String state = this->webServer->arg("state");
 		if (state == "on")
-		{
 			this->light_state = LIGHT_ON;
-		}
 		else if (state == "off")
-		{
 			this->light_state = LIGHT_OFF;
-		}
 		else
-		{
 			fail = true;
-		}
 	}
 	if (!fail && this->webServer->hasArg("mode"))
 	{
@@ -110,13 +94,9 @@ void RGBComponent::doOnRest()
 			result = false;
 		}
 		else if (req_mode == "normal")
-		{
 			this->mode = MODE_DEFAULT;
-		}
 		else
-		{
 			fail = true;
-		}
 	}
 
 	if (fail)
@@ -126,29 +106,17 @@ void RGBComponent::doOnRest()
 	else
 	{
 		if (this->webServer->hasArg("color"))
-		{
 			this->rgb = h2c(this->webServer->arg("color"));
-		}
 		if (this->webServer->hasArg("r"))
-		{
 			this->rgb.red = this->webServer->arg("r").toInt();
-		}
 		if (this->webServer->hasArg("g"))
-		{
 			this->rgb.green = this->webServer->arg("g").toInt();
-		}
 		if (this->webServer->hasArg("b"))
-		{
 			this->rgb.blue = this->webServer->arg("b").toInt();
-		}
 		if (this->webServer->hasArg("brightness"))
-		{
-			this->rgb = b2c(this->rgb, this->webServer->arg("brightness").toInt());
-		}
+			this->rgb = this->rgb.brightness(this->webServer->arg("brightness").toInt());
 		if (this->mode == MODE_DEFAULT)
-		{
 			this->blend(this->rgb);
-		}
 		this->webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":") + String(this->rgb.red) + String(", \"g\":") + String(this->rgb.green) + String(",\"b\":") + String(this->rgb.blue) + String(", \"mode\":\"") + String(this->mode) + String("\", \"state\":") + String(this->light_state));
 	}
 }
@@ -157,86 +125,6 @@ void RGBComponent::registerRest(ESP8266WebServer &webServer)
 {
 	webServer.on(String("/rgb/") + String(this->sensor_id), HTTP_GET, std::bind(&RGBComponent::doOnRest, this));
 	this->webServer = &webServer;
-}
-
-/*
-void RGBComponent::receive(String topic, String data, bool cont)
-{
-
-	uint16_t int_val = message.getInt();
-	const char *str_val = message.getString();
-	char *cust_val = (char *)message.getCustom();
-	switch (message.type)
-	{
-	case V_STATUS:
-		Log.notice("V_STATUS command received: %d (%s)" CR, int_val, c2s(rgb).c_str());
-		if ((int_val < 0) || (int_val > 1))
-		{
-			Log.warning("V_STATUS data invalid (should be 0/1)" CR);
-			return;
-		}
-		if (light_state != int_val && int_val == LIGHT_ON)
-		{
-			mode = MODE_DAYTIME;
-		}
-		light_state = int_val;
-		if (mode == MODE_DEFAULT || light_state == 0)
-		{
-			blend(rgb);
-		}
-		else
-		{
-			result = true;
-		}
-		break;
-	case V_PERCENTAGE:
-		Log.notice("V_PERCENTAGE command received: %d (%s)" CR, int_val,
-				   c2s(rgb).c_str());
-		if (mode == MODE_UNDEF)
-			break;
-		int_val = constrain(int_val, 0, 100);
-		mode = MODE_DEFAULT;
-		rgb = b2c(rgb, int_val);
-		blend(rgb);
-		break;
-	case V_RGB:
-		Log.notice("V_RGB command received: %s" CR, str_val);
-		if (mode == MODE_UNDEF)
-			break;
-		mode = MODE_DEFAULT;
-		rgb = h2c(str_val);
-		blend(rgb);
-		break;
-	case V_TEXT:
-		Log.notice("V_TEXT command received: %s" CR, cust_val);
-		if (mode == MODE_UNDEF)
-			break;
-		if (strcmp(cust_val, "candle") == 0)
-		{
-			mode = MODE_CANDLE;
-			result = true;
-		}
-		else if (strcmp(cust_val, "daytime") == 0)
-		{
-			mode = MODE_DAYTIME;
-			result = true;
-		}
-		else if (strcmp(cust_val, "normal") == 0)
-		{
-			mode = MODE_DEFAULT;
-			blend(rgb);
-		}
-		break;
-	}
-}
-*/
-
-String RGBComponent::c2s(const Color color)
-{
-	String result = String(color.red, HEX) + ":";
-	result.concat(String(color.green, HEX) + ":");
-	result.concat(String(color.blue, HEX));
-	return result;
 }
 
 const Color RGBComponent::h2c(const String rgb)
@@ -259,28 +147,19 @@ const Color RGBComponent::cn(Color rgb)
 	return Color(colorRange(rgb.red), colorRange(rgb.green), colorRange(rgb.blue));
 }
 
-const int16_t RGBComponent::c2b(const Color c)
-{
-	return (c.red + c.green + c.blue) * BRIGHTNESS_MAX_VALUE / 3 / RGB_MAX_VALUE;
-}
-
-const Color RGBComponent::b2c(Color rgb, const int16_t brightness)
-{
-	int16_t a = rgb.red + rgb.green + rgb.blue;
-	int16_t d = ((brightness * 3 * RGB_MAX_VALUE / BRIGHTNESS_MAX_VALUE) - a);
-	if (d == 0)
-		return rgb;
-	int16_t c = d > 0 ? RGB_MAX_VALUE : 0;
-	return rgb + ((c - rgb) * d / ((3 * c) - a));
-}
-
 const Color RGBComponent::daytimeColor()
 {
 	uint32_t h = hour() * 60 + minute();
 	double s = (h - 60) * M_PI / 12 / 60 + M_PI * 1.5;
 	int16_t b = 82 + fmax(0, fmin(1, sin(s) * 2 + .5)) * 173;
 	b = b * BRIGHTNESS_MAX_VALUE / RGB_MAX_VALUE;
-	return b2c(Color(DAYTIMECOLOR), b);
+	return Color(DAYTIMECOLOR).brightness(b);
+}
+
+void RGBComponent::updateCandle()
+{
+	this->desired_color = this->candle.getColor();
+	this->render_finish = millis() + candle.getTime();
 }
 
 void RGBComponent::blend(Color c)
@@ -291,13 +170,12 @@ void RGBComponent::blend(Color c)
 		mode = MODE_DEFAULT;
 		c = _BLACK;
 	}
-	rgbBlender.Blend(rgbBlender.GetColor(), c, (uint32_t)BLEND_TIME);
-	result = false;
+	this->desired_color = c;
+	this->render_finish = millis() + BLEND_TIME;
 }
 
 void RGBComponent::setup()
 {
-	rgbBlender.Hold(_BLACK);
 }
 
 void RGBComponent::reportStatus(JsonObject &jo)
@@ -306,19 +184,15 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	jo["Mode"] = this->getModeName();
 	jo["State"] = this->light_state ? "ON" : "OFF";
 	jo["Result"] = this->result ? "TRUE" : "FALSE";
-	jo["Dimm"] = String(this->c2b(this->rgb)) + "%";
+	jo["Dimm"] = String(this->rgb.brightness()) + "%";
 	JsonObject &c = jo.createNestedObject("Candle");
 	c["color"] = this->candle.rand_color;
-	c["colorString"] = this->c2s(
-		this->candle.color_list[this->candle.rand_color]);
+	c["colorString"] =
+		this->candle.color_list[this->candle.rand_color].toHex();
 	c["delay"] = this->candle.timer;
-	jo["Color"] = "0x" + this->c2s(this->rgb);
-	jo["Real color"] = "0x" + this->c2s(this->getColor());
-}
-
-const Color RGBComponent::getColor()
-{
-	return rgbBlender.GetColor();
+	jo["Color"] = "0x" + this->rgb.toHex();
+	jo["DEsired"] = "0x" + this->desired_color.toHex();
+	jo["Real color"] = "0x" + this->current_color.toHex();
 }
 
 String RGBComponent::moduleName()

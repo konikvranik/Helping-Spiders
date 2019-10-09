@@ -125,7 +125,7 @@ struct Color
     {
         return (l + RGB_MAX_VALUE) % RGB_MAX_VALUE;
     }
-    Color &brightness(const int16_t brightness)
+    Color brightness(const int16_t brightness)
     {
         if (this->brightness() == 0)
         {

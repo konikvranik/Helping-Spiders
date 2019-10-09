@@ -2,7 +2,7 @@
 #define CANDLE_INCLUDE_h
 
 #include <Arduino.h>
-#include <Color/Color.h>
+#include "Color.h"
 
 struct Candle
 {
@@ -12,7 +12,7 @@ struct Candle
   uint16_t vary;
   uint8_t rand_color;
   uint16_t timer;
-  
+
   static const uint8_t s = 7;
   Color color_list[s] = {{255, 235, 50}, {145, 64, 30}, {225, 105, 40}, {235, 205, 12}, {128, 95, 50}, {64, 50, 20}, {255, 127, 0}};
 
@@ -30,11 +30,14 @@ public:
     timer = (rand() % (vary * 2 + 50)) + vary;
     return timer;
   } // randomness
-  void Blend(RGBLEDBlender &blender)
+  Color getColor()
   {
-    Reset();
-    blender.Blend(blender.GetColor(), color_list[RandColor()], RandTimer());
+    return color_list[RandColor()];
   } // blend colors
+  uint16_t getTime()
+  {
+    return RandTimer();
+  }
   void Reset(void)
   {
     vary = rand() % (timer); // random number variance

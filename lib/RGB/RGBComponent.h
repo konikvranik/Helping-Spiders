@@ -17,12 +17,13 @@
 #include <stdio.h>
 #include "Candle.h"
 #include "common.h"
+#include "Transformation.h"
 
 #define MODE_DEFAULT 0
 #define MODE_DAYTIME 1
 #define MODE_CANDLE 2
 #define MODE_UNDEF 0xff
-#define BLEND_TIME 80000
+#define BLEND_TIME 800
 
 #define LIGHT_OFF 0
 #define LIGHT_ON 1
@@ -33,14 +34,13 @@ class RGBComponent : public virtual AbstractComponent
 {
   uint32_t last_light_msg = millis();
   ESP8266WebServer *webServer = nullptr;
-  uint32_t last_render = 0;
-  uint32_t render_finish = 0;
   Color current_color;
   Color desired_color = _BLACK;
   const uint8_t red_pin;
   const uint8_t green_pin;
   const uint8_t blue_pin;
   Candle candle;
+  Transformation transformation;
 
   void blend(Color c, uint32_t time = BLEND_TIME);
   void doOnRest();
@@ -63,7 +63,7 @@ public:
   const String getModeName();
   virtual String moduleName();
   virtual void updateCandle();
-  boolean isRendering();
+  Color calculateColor(Color c_from, Color c_to, uint32_t t_from, uint32_t t_to, uint32_t now);
 };
 
 #endif /* RGBCOMPONENT_H_ */

@@ -34,6 +34,15 @@
 struct Color
 {
     Color(int16_t red = 0, int16_t green = 0, int16_t blue = 0) : red(red), green(green), blue(blue) {}
+    Color(String rgb)
+    {
+        long int color = strtol(rgb.c_str(), NULL, 16);
+        blue = int16_t(color % 0x100);
+        color = color / 0x100;
+        green = int16_t(color % 0x100);
+        red = int16_t(color / 0x100);
+    }
+
     int16_t red;
     int16_t green;
     int16_t blue;
@@ -125,7 +134,7 @@ struct Color
     {
         return (l + RGB_MAX_VALUE) % RGB_MAX_VALUE;
     }
-    Color brightness(const int16_t brightness)
+    Color &brightness(const int16_t brightness)
     {
         if (this->brightness() == 0)
         {
@@ -139,7 +148,7 @@ struct Color
 
         int16_t r = difference > 0 ? RGB_MAX_VALUE - this->red : this->red;
         int16_t g = difference > 0 ? RGB_MAX_VALUE - this->green : this->green;
-        int16_t b = difference > 0 ? RGB_MAX_VALUE - this->blue: this->blue;
+        int16_t b = difference > 0 ? RGB_MAX_VALUE - this->blue : this->blue;
 
         const int16_t t = (r + g + b);
         this->red += difference * 3 * r / t;
@@ -150,6 +159,17 @@ struct Color
     int16_t brightness()
     {
         return (red + green + blue) * BRIGHTNESS_MAX_VALUE / RGB_MAX_VALUE / 3;
+    }
+    Color &normalize()
+    {
+        this->red = _cn(this->red);
+        this->green = _cn(this->green);
+        this->blue = _cn(this->blue);
+        return *this;
+    }
+    static int16_t _cn(int16_t color)
+    {
+        return color < 0 ? 0 : ((color > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : color);
     }
 };
 

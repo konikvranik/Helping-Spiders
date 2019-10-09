@@ -19,7 +19,7 @@ RGBComponent::~RGBComponent()
 
 void RGBComponent::loop()
 {
-	bool render = this->isRendering();
+	bool render = this->transformation.valid(millis());
 	if (!render)
 		switch (this->mode)
 		{
@@ -35,16 +35,14 @@ void RGBComponent::loop()
 	{
 		this->mode = MODE_DEFAULT;
 		this->desired_color = _BLACK;
+		this->transformation = Transformation(millis(), BLEND_TIME, this->current_color, this->desired_color);
 	}
 	if (this->current_color == this->desired_color)
 		return;
 	if (render)
 	{
 		uint32_t now = millis();
-		this->current_color -= this->desired_color;
-		this->current_color *= (int32_t)(this->last_render - now);
-		this->current_color /= this->render_finish - this->last_render;
-		this->last_render = now;
+		this->current_color = this->transformation.getColor(now);
 	}
 	else
 	{
@@ -53,11 +51,6 @@ void RGBComponent::loop()
 	analogWrite(this->red_pin, this->current_color.red);
 	analogWrite(this->green_pin, this->current_color.green);
 	analogWrite(this->blue_pin, this->current_color.blue);
-}
-
-boolean RGBComponent::isRendering()
-{
-	return this->render_finish > millis();
 }
 
 void RGBComponent::doOnRest()
@@ -103,7 +96,7 @@ void RGBComponent::doOnRest()
 	else
 	{
 		if (this->webServer->hasArg("color"))
-			this->rgb = h2c(this->webServer->arg("color"));
+			this->rgb = Color(this->webServer->arg("color"));
 		if (this->webServer->hasArg("r"))
 			this->rgb.red = this->webServer->arg("r").toInt();
 		if (this->webServer->hasArg("g"))
@@ -124,26 +117,6 @@ void RGBComponent::registerRest(ESP8266WebServer &webServer)
 	this->webServer = &webServer;
 }
 
-const Color RGBComponent::h2c(const String rgb)
-{
-	long int color = strtol(rgb.c_str(), NULL, 16);
-	int16_t blue = int16_t(color % 0x100);
-	color = color / 0x100;
-	int16_t green = int16_t(color % 0x100);
-	int16_t red = int16_t(color / 0x100);
-	return Color(red, green, blue);
-}
-
-int16_t colorRange(int16_t color)
-{
-	return color < 0 ? 0 : ((color > RGB_MAX_VALUE - 1) ? RGB_MAX_VALUE - 1 : color);
-}
-
-const Color RGBComponent::cn(Color rgb)
-{
-	return Color(colorRange(rgb.red), colorRange(rgb.green), colorRange(rgb.blue));
-}
-
 const Color RGBComponent::daytimeColor()
 {
 	uint32_t h = hour() * 60 + minute();
@@ -162,15 +135,12 @@ void RGBComponent::blend(Color c, uint32_t time)
 {
 	uint32_t now = millis();
 	this->desired_color = c;
-	this->render_finish = now + BLEND_TIME;
-	this->last_render = now;
+	this->transformation = Transformation(now, time, this->current_color, this->desired_color);
 }
 
 void RGBComponent::setup()
 {
 	uint32_t now = millis();
-	this->last_render = now;
-	this->render_finish = now;
 }
 
 String time(uint32_t time)
@@ -197,13 +167,12 @@ void RGBComponent::reportStatus(JsonObject &jo)
 		this->candle.color_list[this->candle.rand_color].toHex();
 	c["delay"] = this->candle.timer;
 	jo["Color"] = "0x" + this->rgb.toHex();
-	jo["Desired color"] = "0x" + this->desired_color.toHex();
-	jo["Real color"] = "0x" + this->current_color.toHex();
-	jo["Last render"] = time(this->last_render);
-	jo["render finish"] = time(this->render_finish);
+	jo["Desired color"] = this->desired_color.toHex();
+	jo["Real color"] = this->current_color.toHex();
 	jo["current time"] = time(millis());
-	jo["rendering"] = this->isRendering();
-	jo["diff"] = (int32_t)(this->last_render - millis());
+	jo["rendering"] = this->transformation.valid(millis());
+	jo["transformarion valid"] = this->transformation.valid(millis());
+	jo["transformarion color"] = this->transformation.getColor(millis()).toHex();
 }
 
 String RGBComponent::moduleName()

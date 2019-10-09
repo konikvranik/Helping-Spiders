@@ -42,7 +42,7 @@ void RGBComponent::loop()
 	{
 		uint32_t now = millis();
 		this->current_color -= this->desired_color;
-		this->current_color *= this->last_render - now;
+		this->current_color *= (int32_t)(this->last_render - now);
 		this->current_color /= this->render_finish - this->last_render;
 		this->last_render = now;
 	}
@@ -203,7 +203,7 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	jo["render finish"] = time(this->render_finish);
 	jo["current time"] = time(millis());
 	jo["rendering"] = this->isRendering();
-	jo["diff"] = this->last_render - millis();
+	jo["diff"] = (int32_t)(this->last_render - millis());
 }
 
 String RGBComponent::moduleName()

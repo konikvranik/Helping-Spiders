@@ -63,6 +63,7 @@ public:
   const String getModeName();
   virtual String moduleName();
   virtual void updateCandle();
+  boolean isRendering();
 };
 
 #endif /* RGBCOMPONENT_H_ */

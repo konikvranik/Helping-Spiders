@@ -19,7 +19,7 @@ RGBComponent::~RGBComponent()
 
 void RGBComponent::loop()
 {
-	bool render = this->render_finish > millis();
+	bool render = this->isRendering();
 	if (!render)
 		switch (this->mode)
 		{
@@ -53,6 +53,11 @@ void RGBComponent::loop()
 	analogWrite(this->red_pin, this->current_color.red);
 	analogWrite(this->green_pin, this->current_color.green);
 	analogWrite(this->blue_pin, this->current_color.blue);
+}
+
+boolean RGBComponent::isRendering()
+{
+	return this->render_finish > millis();
 }
 
 void RGBComponent::doOnRest()
@@ -197,6 +202,8 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	jo["Last render"] = time(this->last_render);
 	jo["render finish"] = time(this->render_finish);
 	jo["current time"] = time(millis());
+	jo["rendering"] = this->isRendering();
+	jo["diff"] = this->last_render - millis();
 }
 
 String RGBComponent::moduleName()

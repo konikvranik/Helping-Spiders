@@ -46,6 +46,11 @@ void RGBComponent::loop()
 			break;
 		}
 
+	if (light_state != LIGHT_ON)
+	{
+		this->mode = MODE_DEFAULT;
+		this->desired_color = _BLACK;
+	}
 	if (this->current_color == this->desired_color)
 		return;
 	if (remaining > 0)
@@ -86,10 +91,12 @@ void RGBComponent::doOnRest()
 		if (req_mode == "candle")
 		{
 			this->mode = MODE_CANDLE;
+			this->updateCandle();
 		}
 		else if (req_mode == "daytime")
 		{
 			this->mode = MODE_DAYTIME;
+			this->blend(this->daytimeColor());
 		}
 		else if (req_mode == "normal")
 			this->mode = MODE_DEFAULT;
@@ -147,8 +154,10 @@ const Color RGBComponent::cn(Color rgb)
 
 const Color RGBComponent::daytimeColor()
 {
-	int16_t b = 82 + fmax(0, fmin(1, sin((hour() * 60 + minute() - 60) * M_PI / 12 / 60 + M_PI * 1.5) * 2 + .5)) * 173;
-	b *= BRIGHTNESS_MAX_VALUE / RGB_MAX_VALUE;
+	uint32_t h = hour() * 60 + minute();
+	double s = (h - 60) * M_PI / 12 / 60 + M_PI * 1.5;
+	int16_t b = 82 + fmax(0, fmin(1, sin(s) * 2 + .5)) * 173;
+	b = b * BRIGHTNESS_MAX_VALUE / RGB_MAX_VALUE;
 	return Color(DAYTIMECOLOR).brightness(b);
 }
 
@@ -160,12 +169,6 @@ void RGBComponent::updateCandle()
 
 void RGBComponent::blend(Color c)
 {
-	// If last dimmer state is zero, set dimmer to 100
-	if (light_state != LIGHT_ON)
-	{
-		mode = MODE_DEFAULT;
-		c = _BLACK;
-	}
 	this->desired_color = c;
 	this->render_finish = millis() + BLEND_TIME;
 }
@@ -182,7 +185,7 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	jo["ID"] = this->sensor_id;
 	jo["Mode"] = this->getModeName();
 	jo["State"] = this->light_state ? "ON" : "OFF";
-	jo["Dimm"] = String(this->rgb.brightness()) + "%";
+	jo["Brightness"] = String(this->rgb.brightness()) ;
 	JsonObject &c = jo.createNestedObject("Candle");
 	c["color"] = this->candle.rand_color;
 	c["colorString"] =

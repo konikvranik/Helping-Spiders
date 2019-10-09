@@ -22,7 +22,7 @@
 #define MODE_DAYTIME 1
 #define MODE_CANDLE 2
 #define MODE_UNDEF 0xff
-#define BLEND_TIME 800
+#define BLEND_TIME 8000
 #define MSG_PERIOD 3000
 
 #define LIGHT_OFF 0

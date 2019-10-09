@@ -17,25 +17,10 @@ RGBComponent::~RGBComponent()
 	// TODO Auto-generated destructor stub
 }
 
-const String RGBComponent::getModeName()
-{
-	switch (mode)
-	{
-	case MODE_CANDLE:
-		return "candle";
-	case MODE_DAYTIME:
-		return "daytime";
-	case MODE_DEFAULT:
-		return "normal";
-	}
-	return "UNKNOWN";
-}
-
 void RGBComponent::loop()
 {
-	uint32_t now = millis();
-	uint32_t remaining = this->render_finish - now;
-	if (remaining <= 0)
+	bool render = this->render_finish > millis();
+	if (!render)
 		switch (this->mode)
 		{
 		case MODE_DAYTIME:
@@ -53,15 +38,17 @@ void RGBComponent::loop()
 	}
 	if (this->current_color == this->desired_color)
 		return;
-	if (remaining > 0)
+	if (render)
 	{
-		uint16_t l = (this->render_finish - this->last_render);
-		this->current_color = (this->desired_color - this->current_color) * (1 - remaining / l);
+		uint32_t now = millis();
+		this->current_color -= this->desired_color;
+		this->current_color *= this->last_render - now;
+		this->current_color /= this->render_finish - this->last_render;
 		this->last_render = now;
 	}
 	else
 	{
-		this->current_color = this->desired_color;
+		this->current_color = Color(this->desired_color);
 	}
 	analogWrite(this->red_pin, this->current_color.red);
 	analogWrite(this->green_pin, this->current_color.green);
@@ -163,14 +150,15 @@ const Color RGBComponent::daytimeColor()
 
 void RGBComponent::updateCandle()
 {
-	this->desired_color = this->candle.getColor();
-	this->render_finish = millis() + candle.getTime();
+	this->blend(this->candle.getColor(), this->candle.getTime());
 }
 
-void RGBComponent::blend(Color c)
+void RGBComponent::blend(Color c, uint32_t time)
 {
+	uint32_t now = millis();
 	this->desired_color = c;
-	this->render_finish = millis() + BLEND_TIME;
+	this->render_finish = now + BLEND_TIME;
+	this->last_render = now;
 }
 
 void RGBComponent::setup()
@@ -180,23 +168,52 @@ void RGBComponent::setup()
 	this->render_finish = now;
 }
 
+String time(uint32_t time)
+{
+	String result = String(time % 1000);
+	time /= 1000;
+	result = String(time % 60) + "." + result;
+	time /= 60;
+	result = String(time % 60) + ":" + result;
+	time /= 60;
+	result = String(time) + ":" + result;
+	return result;
+}
+
 void RGBComponent::reportStatus(JsonObject &jo)
 {
 	jo["ID"] = this->sensor_id;
 	jo["Mode"] = this->getModeName();
 	jo["State"] = this->light_state ? "ON" : "OFF";
-	jo["Brightness"] = String(this->rgb.brightness()) ;
+	jo["Brightness"] = String(this->rgb.brightness());
 	JsonObject &c = jo.createNestedObject("Candle");
 	c["color"] = this->candle.rand_color;
 	c["colorString"] =
 		this->candle.color_list[this->candle.rand_color].toHex();
 	c["delay"] = this->candle.timer;
 	jo["Color"] = "0x" + this->rgb.toHex();
-	jo["DEsired"] = "0x" + this->desired_color.toHex();
+	jo["Desired color"] = "0x" + this->desired_color.toHex();
 	jo["Real color"] = "0x" + this->current_color.toHex();
+	jo["Last render"] = time(this->last_render);
+	jo["render finish"] = time(this->render_finish);
+	jo["current time"] = time(millis());
 }
 
 String RGBComponent::moduleName()
 {
 	return "RGB";
+}
+
+const String RGBComponent::getModeName()
+{
+	switch (mode)
+	{
+	case MODE_CANDLE:
+		return "candle";
+	case MODE_DAYTIME:
+		return "daytime";
+	case MODE_DEFAULT:
+		return "normal";
+	}
+	return "UNKNOWN";
 }

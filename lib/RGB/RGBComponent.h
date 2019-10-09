@@ -22,8 +22,7 @@
 #define MODE_DAYTIME 1
 #define MODE_CANDLE 2
 #define MODE_UNDEF 0xff
-#define BLEND_TIME 8000
-#define MSG_PERIOD 3000
+#define BLEND_TIME 80000
 
 #define LIGHT_OFF 0
 #define LIGHT_ON 1
@@ -43,7 +42,7 @@ class RGBComponent : public virtual AbstractComponent
   const uint8_t blue_pin;
   Candle candle;
 
-  void blend(Color c);
+  void blend(Color c, uint32_t time = BLEND_TIME);
   void doOnRest();
   void sendMessage();
 

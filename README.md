@@ -2,7 +2,7 @@
 
 # Helping Spiders
 
-Platform for building customized arduino sensors/acutators to use with [Home Assistant](http://home-assistant.io).
+Platform for building customized arduino sensors/actuators, especially to use with [Home Assistant](http://home-assistant.io).
 
 You can select existing modules and customize those. Combination of several modules is allowed. E.g.: you can make module controlling LED strip, listening to IR signals and controlling iLife vacuum cleaner all together.
 
@@ -13,7 +13,9 @@ Actually supported are:
 * LED strip
 * OTA
 * status reporting
-* DHT and HTU temperature and humidity sensors
+* prometheus reporting
+* DS18B20 DHT and HTU temperature and humidity sensors
+* HC-SR05
 
 ## Prerequisities
 
@@ -30,3 +32,12 @@ Edit values in this `Makefile`. Make sure that `PATH_TO_PROJECT_DIR/helpingspide
 Remove directives you don't want to use, select wanted modules by using directives `ENABLE_<MODULE>` and `make`.
 
 To upload ocer serial port, use `make upload`. To upload over the air, use `make netupload`. `MODULE_IP` has to be set in `Makefile` for this purpose. Could be IP or hostname.
+
+# Devices
+
+* *ESP01*: Thermomether
+* *ESP04*: iLife IR
+* *ESP05*: Thermomether
+* *ESP06*: Thermomether and distance meter
+* *ESP07*: Thermomether and distance meter
+* *ESP08*: LED strip controller

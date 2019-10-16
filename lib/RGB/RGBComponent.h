@@ -39,6 +39,7 @@ class RGBComponent : public virtual AbstractComponent
   const uint8_t red_pin;
   const uint8_t green_pin;
   const uint8_t blue_pin;
+  uint32_t last_write;
   Candle candle;
   Transformation transformation;
 
@@ -48,7 +49,7 @@ class RGBComponent : public virtual AbstractComponent
 
 public:
   uint8_t mode = MODE_UNDEF;
-  int16_t light_state = LIGHT_OFF;
+  int8_t light_state = LIGHT_OFF;
   Color rgb = _BLACK;
   RGBComponent(const String node_id, const uint8_t, const uint16_t, const uint16_t, const uint16_t);
   virtual ~RGBComponent();

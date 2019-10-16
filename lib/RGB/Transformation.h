@@ -44,7 +44,7 @@ public:
 
     int32_t calc_(int32_t c, uint32_t time)
     {
-        return c * (time - t_from) / duration;
+        return (c * (int32_t)(time - t_from)) / (int32_t)duration;
     }
     Color getColor(uint32_t time)
     {

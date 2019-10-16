@@ -27,7 +27,7 @@ public:
   } // make sure next random number is different than last
   uint16_t RandTimer(void)
   {
-    timer = (rand() % (vary * 2 + 50)) + vary;
+    timer = (rand() % (vary * 2 + 200)) + vary;
     return timer;
   } // randomness
   Color getColor()

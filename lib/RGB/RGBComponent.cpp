@@ -19,8 +19,19 @@ RGBComponent::~RGBComponent()
 
 void RGBComponent::loop()
 {
-	bool render = this->transformation.valid(millis());
-	if (!render)
+	uint32_t now = millis();
+	bool render = this->transformation.valid(now);
+	if (this->light_state != LIGHT_ON && !(render && this->desired_color == _BLACK))
+	{
+		if (this->desired_color != _BLACK)
+		{
+			this->mode = MODE_DEFAULT;
+			this->desired_color = _BLACK;
+			this->transformation = Transformation(now, BLEND_TIME, this->current_color, this->desired_color);
+		}
+		render = this->transformation.valid(now);
+	}
+	else if (!render)
 		switch (this->mode)
 		{
 		case MODE_DAYTIME:
@@ -31,26 +42,23 @@ void RGBComponent::loop()
 			break;
 		}
 
-	if (light_state != LIGHT_ON)
-	{
-		this->mode = MODE_DEFAULT;
-		this->desired_color = _BLACK;
-		this->transformation = Transformation(millis(), BLEND_TIME, this->current_color, this->desired_color);
-	}
-	if (this->current_color == this->desired_color)
-		return;
 	if (render)
 	{
-		uint32_t now = millis();
 		this->current_color = this->transformation.getColor(now);
+		render = (this->current_color != this->desired_color);
 	}
 	else
 	{
+		render = (this->current_color != this->desired_color);
 		this->current_color = Color(this->desired_color);
 	}
-	analogWrite(this->red_pin, this->current_color.red);
-	analogWrite(this->green_pin, this->current_color.green);
-	analogWrite(this->blue_pin, this->current_color.blue);
+	if (render)
+	{
+		analogWrite(this->red_pin, min(this->current_color.red * PWMRANGE / 255, PWMRANGE));
+		analogWrite(this->green_pin, min(this->current_color.green * PWMRANGE / 255, PWMRANGE));
+		analogWrite(this->blue_pin, min(this->current_color.blue * PWMRANGE / 255, PWMRANGE));
+		this->last_write = now;
+	}
 }
 
 void RGBComponent::doOnRest()
@@ -140,7 +148,15 @@ void RGBComponent::blend(Color c, uint32_t time)
 
 void RGBComponent::setup()
 {
-	uint32_t now = millis();
+	pinMode(this->red_pin, OUTPUT_OPEN_DRAIN);
+	pinMode(this->green_pin, OUTPUT_OPEN_DRAIN);
+	pinMode(this->blue_pin, OUTPUT_OPEN_DRAIN);
+	digitalWrite(this->red_pin, LOW);
+	digitalWrite(this->green_pin, LOW);
+	digitalWrite(this->blue_pin, LOW);
+	analogWrite(this->red_pin, 0);
+	analogWrite(this->green_pin, 0);
+	analogWrite(this->blue_pin, 0);
 }
 
 String time(uint32_t time)
@@ -166,13 +182,14 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	c["colorString"] =
 		this->candle.color_list[this->candle.rand_color].toHex();
 	c["delay"] = this->candle.timer;
-	jo["Color"] = "0x" + this->rgb.toHex();
+	jo["Color"] = this->rgb.toHex();
 	jo["Desired color"] = this->desired_color.toHex();
-	jo["Real color"] = this->current_color.toHex();
+	jo["Current color"] = this->current_color.toHex();
 	jo["current time"] = time(millis());
 	jo["rendering"] = this->transformation.valid(millis());
 	jo["transformarion valid"] = this->transformation.valid(millis());
 	jo["transformarion color"] = this->transformation.getColor(millis()).toHex();
+	jo["last write"] = time(this->last_write);
 }
 
 String RGBComponent::moduleName()

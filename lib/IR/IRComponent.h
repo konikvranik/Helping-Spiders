@@ -29,6 +29,7 @@ class IRComponent : public AbstractComponent
   uint32_t receivedCommand = 0;
   decode_type_t receivedType;
   uint32_t receivedAddres;
+  uint32_t receivedTime;
   bool receivedRepeat;
   uint64_t sentCode = 0;
   IRrecv irrecv;

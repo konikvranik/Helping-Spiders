@@ -57,6 +57,7 @@ void IRComponent::loop()
 	decode_results ircode;
 	if (irrecv.decode(&ircode))
 	{
+		this->receivedTime = millis();
 		decode_type_t decodeType = (decode_type_t)ircode.decode_type;
 		this->receivedCode = ircode.value;
 		this->receivedCommand = ircode.command;

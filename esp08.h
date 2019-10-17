@@ -12,3 +12,7 @@
 #define GREEN_PIN 0
 #define RED_PIN 3
 
+#define ENABLE_IR
+#define IR_CHILD_ID 1
+#define IRRX_PIN 2
+#define IRTX_PIN 5

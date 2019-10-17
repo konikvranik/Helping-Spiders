@@ -12,6 +12,7 @@
 #include <TimeLib.h>
 #include <NtpClientLib.h>
 #include <ArduinoLog.h>
+#include <FS.h>
 
 #include "AbstractComponent.h"
 
@@ -61,7 +62,7 @@ AbstractComponent *modules[] =
         new RGBComponent(str(NODE_ID), RGB_CHILD_ID, RED_PIN, GREEN_PIN, BLUE_PIN),
 #endif
 #ifdef ENABLE_IR
-        new IRComponent(IR_CHILD_ID, IRRX_PIN, IRTX_PIN),
+        new IRComponent(str(NODE_ID), IR_CHILD_ID, IRRX_PIN, IRTX_PIN),
 #endif
 #ifdef ENABLE_ILIFE
         new iLifeComponent(ILIFE_CHILD_ID, IRTX_PIN),

@@ -15,6 +15,7 @@
 #include <TimeLib.h>
 #include <math.h>
 #include <stdio.h>
+#include <FS.h>
 #include "Candle.h"
 #include "common.h"
 #include "Transformation.h"
@@ -46,6 +47,7 @@ class RGBComponent : public virtual AbstractComponent
   void blend(Color c, uint32_t time = BLEND_TIME);
   void doOnRest();
   void sendMessage();
+  void save();
 
 public:
   uint8_t mode = MODE_UNDEF;

@@ -8,11 +8,10 @@
 #include "IRComponent.h"
 
 IRComponent::IRComponent(const String node_id, const uint8_t sensor_id, const uint16_t rx_pin,
-						 const uint16_t tx_pin, bool inverted_tx) : AbstractComponent(node_id, sensor_id),
-																	irrecv(rx_pin), irsend(tx_pin, inverted_tx)
+						 const uint16_t tx_pin, bool inverted_tx) : AbstractComponent(node_id, sensor_id), irrecv(rx_pin), irsend(tx_pin, inverted_tx)
 {
 	pinMode(tx_pin, OUTPUT);
-	pinMode(rx_pin, INPUT);
+	pinMode(rx_pin, INPUT_PULLUP);
 	digitalWrite(tx_pin, inverted_tx ? HIGH : LOW);
 }
 
@@ -24,7 +23,7 @@ IRComponent::~IRComponent()
 void IRComponent::setup()
 {
 	// Start the ir receiver
-	irrecv.enableIRIn();
+	irrecv.enableIRIn(true);
 }
 
 void IRComponent::receive(String topic, String data, bool cont)
@@ -60,6 +59,10 @@ void IRComponent::loop()
 	{
 		decode_type_t decodeType = (decode_type_t)ircode.decode_type;
 		this->receivedCode = ircode.value;
+		this->receivedCommand = ircode.command;
+		this->receivedType = ircode.decode_type;
+		this->receivedAddres = ircode.address;
+		this->receivedRepeat = ircode.repeat;
 		irrecv.resume();
 	}
 }
@@ -67,8 +70,14 @@ void IRComponent::loop()
 void IRComponent::reportStatus(JsonObject &jo)
 {
 	jo["ID"] = this->sensor_id;
-	jo["Received"] = this->receivedCode;
-	jo["Send"] = this->sentCode;
+	String base = String("");
+	for (uint8_t i = 0; i < 16; i++)
+		base = base + String((uint8_t)this->receivedCode >> (i * 4) & 0xF, HEX);
+	jo["Received"] = String(this->receivedType, DEC) + ":" + String(this->receivedAddres, HEX) + ":" + String(this->receivedCommand, HEX) + String((uint32_t)(this->receivedCode & 0xFFFFFFFF), HEX) + ":" + String((uint32_t)(this->receivedCode << 32 & 0xFFFFFFFF), HEX) + ":" + this->receivedRepeat;
+	base = String("");
+	for (uint8_t i = 0; i < 16; i++)
+		base = base + String((uint8_t)this->sentCode >> (i * 4) & 0xF, HEX);
+	jo["Send"] = base;
 }
 
 String IRComponent::moduleName()

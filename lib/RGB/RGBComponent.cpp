@@ -40,6 +40,12 @@ void RGBComponent::loop()
 		case MODE_CANDLE:
 			this->updateCandle();
 			break;
+		case MODE_DEFAULT:
+			if (this->current_color != this->rgb)
+			{
+				this->blend(this->rgb);
+			};
+			break;
 		}
 
 	if (render)
@@ -115,7 +121,32 @@ void RGBComponent::doOnRest()
 			this->rgb = this->rgb.brightness(this->webServer->arg("brightness").toInt());
 		if (this->mode == MODE_DEFAULT)
 			this->blend(this->rgb);
+		this->save();
 		this->webServer->send(200, "application/json; charset=utf-8", String("{ \"r\":") + String(this->rgb.red) + String(", \"g\":") + String(this->rgb.green) + String(",\"b\":") + String(this->rgb.blue) + String(", \"mode\":\"") + String(this->mode) + String("\", \"state\":") + String(this->light_state));
+	}
+}
+
+void RGBComponent::save()
+{
+	File f = SPIFFS.open("/RGB", "r");
+	uint8_t stored_config[4];
+	uint8_t actual_config[4];
+	actual_config[0] = (this->light_state & 0x80) | (this->mode & 0x7F);
+	actual_config[1] = this->rgb.red;
+	actual_config[2] = this->rgb.green;
+	actual_config[3] = this->rgb.blue;
+	bool save = false;
+	if (f.read(stored_config, 4))
+		for (uint8_t i = 0; i < 4; i++)
+			save = save || (actual_config[i] != stored_config[i]);
+	else
+		save = true;
+	f.close();
+	if (save)
+	{
+		f = SPIFFS.open("/RGB", "w");
+		f.write(actual_config, 4);
+		f.close();
 	}
 }
 
@@ -148,6 +179,15 @@ void RGBComponent::blend(Color c, uint32_t time)
 
 void RGBComponent::setup()
 {
+	File f = SPIFFS.open("/RGB", "r");
+	uint8_t config[4];
+	if (f.read(config, 4))
+	{
+		this->light_state = 0x80 & config[0];
+		this->mode = 0x7F & config[0];
+		this->desired_color = Color(config[1], config[2], config[3]);
+	}
+	f.close();
 	pinMode(this->red_pin, OUTPUT_OPEN_DRAIN);
 	pinMode(this->green_pin, OUTPUT_OPEN_DRAIN);
 	pinMode(this->blue_pin, OUTPUT_OPEN_DRAIN);

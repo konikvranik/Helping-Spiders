@@ -20,19 +20,24 @@
 #define ValueTxt F(" value: 0x")
 #define NATxt F(" - not implemented/found")
 
-class IRComponent : public AbstractComponent {
+class IRComponent : public AbstractComponent
+{
 
   String code = "init";
   String oldCode = "init";
-  uint32_t receivedCode;
-  uint32_t sentCode;
+  uint64_t receivedCode = 0;
+  uint32_t receivedCommand = 0;
+  decode_type_t receivedType;
+  uint32_t receivedAddres;
+  bool receivedRepeat;
+  uint64_t sentCode = 0;
   IRrecv irrecv;
   IRsend irsend;
 
   static constexpr const char *TYPE2STRING[] = {
-      "UNKONWN",    "RC5",     "RC6",     "NEC",          "Sony", "Panasonic",
-      "JVC",        "SAMSUNG", "Whynter", "AIWA RC T501", "LG",   "Sanyo",
-      "Mitsubishi", "Dish",    "Sharp",   "Denon"};
+      "UNKONWN", "RC5", "RC6", "NEC", "Sony", "Panasonic",
+      "JVC", "SAMSUNG", "Whynter", "AIWA RC T501", "LG", "Sanyo",
+      "Mitsubishi", "Dish", "Sharp", "Denon"};
 
 public:
   IRComponent(const String node_id, const uint8_t sensor_id, const uint16_t rx_pin,

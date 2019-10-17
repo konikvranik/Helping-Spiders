@@ -62,6 +62,7 @@ void setup()
 	INIT_STUFF
 #endif
 
+	SPIFFS.begin();
 	WiFi.begin(str(WIFI_SSID), str(WIFI_PASSWORD));
 	Log.notice("SSID: %s PWD: %s" CR, str(WIFI_SSID), str(WIFI_PASSWORD));
 	WiFi.onStationModeGotIP(onSTAGotIP); // As soon WiFi is connected, start NTP Client

@@ -12,6 +12,8 @@
 #include <IRrecv.h>
 #include <IRremoteESP8266.h>
 #include <IRsend.h>
+#include <IRac.h>
+#include <IRutils.h>
 
 #define MY_RAWBUF 50
 

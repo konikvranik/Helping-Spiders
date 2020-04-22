@@ -48,7 +48,7 @@ public:
     }
     Color getColor(uint32_t time)
     {
-        return c_from + Color(calc_(c_delta.red, time), calc_(c_delta.green, time), calc_(c_delta.blue, time));
+        return (duration > 0 && t_from + duration >= time) ? c_from + Color(calc_(c_delta.red, time), calc_(c_delta.green, time), calc_(c_delta.blue, time)) : c_to;
     }
 
     boolean valid(uint32_t time)

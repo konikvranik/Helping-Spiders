@@ -35,12 +35,12 @@ class RGBComponent : public virtual AbstractComponent
 {
   uint32_t last_light_msg = millis();
   ESP8266WebServer *webServer = nullptr;
-  Color current_color;
+  Color current_color = _WHITE;
   Color desired_color = _BLACK;
   const uint8_t red_pin;
   const uint8_t green_pin;
   const uint8_t blue_pin;
-  uint32_t last_write;
+  uint32_t last_write = 0;
   Candle candle;
   Transformation transformation;
 
@@ -65,7 +65,6 @@ public:
   static const Color daytimeColor();
   const String getModeName();
   virtual String moduleName();
-  virtual void updateCandle();
   Color calculateColor(Color c_from, Color c_to, uint32_t t_from, uint32_t t_to, uint32_t now);
 };
 

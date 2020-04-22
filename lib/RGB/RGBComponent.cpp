@@ -20,6 +20,9 @@ RGBComponent::~RGBComponent()
 void RGBComponent::loop()
 {
 	uint32_t now = millis();
+	Color prev_color = this->current_color;
+	if (now - this->last_write < 30)
+		return;
 	bool render = this->transformation.valid(now);
 	if (this->light_state != LIGHT_ON && !(render && this->desired_color == _BLACK))
 	{
@@ -29,7 +32,6 @@ void RGBComponent::loop()
 			this->desired_color = _BLACK;
 			this->transformation = Transformation(now, BLEND_TIME, this->current_color, this->desired_color);
 		}
-		render = this->transformation.valid(now);
 	}
 	else if (!render)
 		switch (this->mode)
@@ -38,27 +40,23 @@ void RGBComponent::loop()
 			this->blend(this->daytimeColor());
 			break;
 		case MODE_CANDLE:
-			this->updateCandle();
+			this->blend(this->candle.getColor(), this->candle.getTime());
 			break;
 		case MODE_DEFAULT:
 			if (this->current_color != this->rgb)
-			{
 				this->blend(this->rgb);
-			};
 			break;
 		}
 
-	if (render)
+	if (this->transformation.valid(now))
 	{
 		this->current_color = this->transformation.getColor(now);
-		render = (this->current_color != this->desired_color);
 	}
 	else
 	{
-		render = (this->current_color != this->desired_color);
 		this->current_color = Color(this->desired_color);
 	}
-	if (render)
+	if (prev_color != this->current_color)
 	{
 		analogWrite(this->red_pin, min(this->current_color.red * PWMRANGE / 255, PWMRANGE));
 		analogWrite(this->green_pin, min(this->current_color.green * PWMRANGE / 255, PWMRANGE));
@@ -90,7 +88,7 @@ void RGBComponent::doOnRest()
 		if (req_mode == "candle")
 		{
 			this->mode = MODE_CANDLE;
-			this->updateCandle();
+			this->blend(this->candle.getColor(), this->candle.getTime());
 		}
 		else if (req_mode == "daytime")
 		{
@@ -128,24 +126,27 @@ void RGBComponent::doOnRest()
 
 void RGBComponent::save()
 {
-	File f = SPIFFS.open("/RGB", "r");
-	uint8_t stored_config[4];
+	bool save = true;
 	uint8_t actual_config[4];
-	actual_config[0] = (this->light_state & 0x80) | (this->mode & 0x7F);
+	actual_config[0] = (this->light_state & 0b10000000) | (this->mode & 0b01111111);
 	actual_config[1] = this->rgb.red;
 	actual_config[2] = this->rgb.green;
 	actual_config[3] = this->rgb.blue;
-	bool save = false;
-	if (f.read(stored_config, 4))
+	uint8_t stored_config[4];
+	File f = SPIFFS.open("/RGB", "r");
+	if (f)
+	{
+		save = false;
+		f.read(stored_config, 4);
 		for (uint8_t i = 0; i < 4; i++)
 			save = save || (actual_config[i] != stored_config[i]);
-	else
-		save = true;
+	}
 	f.close();
 	if (save)
 	{
 		f = SPIFFS.open("/RGB", "w");
 		f.write(actual_config, 4);
+		f.flush();
 		f.close();
 	}
 }
@@ -165,11 +166,6 @@ const Color RGBComponent::daytimeColor()
 	return Color(DAYTIMECOLOR).brightness(b);
 }
 
-void RGBComponent::updateCandle()
-{
-	this->blend(this->candle.getColor(), this->candle.getTime());
-}
-
 void RGBComponent::blend(Color c, uint32_t time)
 {
 	uint32_t now = millis();
@@ -179,24 +175,24 @@ void RGBComponent::blend(Color c, uint32_t time)
 
 void RGBComponent::setup()
 {
-	File f = SPIFFS.open("/RGB", "r");
-	uint8_t config[4];
-	if (f.read(config, 4))
-	{
-		this->light_state = 0x80 & config[0];
-		this->mode = 0x7F & config[0];
-		this->desired_color = Color(config[1], config[2], config[3]);
-	}
-	f.close();
 	pinMode(this->red_pin, OUTPUT_OPEN_DRAIN);
 	pinMode(this->green_pin, OUTPUT_OPEN_DRAIN);
 	pinMode(this->blue_pin, OUTPUT_OPEN_DRAIN);
-	digitalWrite(this->red_pin, LOW);
-	digitalWrite(this->green_pin, LOW);
-	digitalWrite(this->blue_pin, LOW);
-	analogWrite(this->red_pin, 0);
-	analogWrite(this->green_pin, 0);
-	analogWrite(this->blue_pin, 0);
+
+	File f = SPIFFS.open("/RGB", "r");
+	uint8_t config[4];
+	if (f)
+	{
+		f.read(config, 4);
+		this->light_state = 0b10000000 & config[0];
+		this->mode = 0b01111111 & config[0];
+		this->rgb = Color(config[1], config[2], config[3]);
+	}
+	else
+	{
+		this->light_state = LIGHT_OFF;
+	}
+	f.close();
 }
 
 String time(uint32_t time)
@@ -230,6 +226,14 @@ void RGBComponent::reportStatus(JsonObject &jo)
 	jo["transformarion valid"] = this->transformation.valid(millis());
 	jo["transformarion color"] = this->transformation.getColor(millis()).toHex();
 	jo["last write"] = time(this->last_write);
+	File f = SPIFFS.open("/RGB", "r");
+	uint8_t config[4];
+	if (f)
+	{
+		f.read(config, 4);
+		jo["saved"] = String(config[0], HEX) + ":" + String(config[1], HEX) + ":" + String(config[2], HEX) + ":" + String(config[3], HEX);
+	}
+	f.close();
 }
 
 String RGBComponent::moduleName()

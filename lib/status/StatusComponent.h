@@ -12,6 +12,7 @@
 #include <ESP8266WebServer.h>
 #include <WiFiUdp.h>
 #include <NtpClientLib.h>
+#include <FS.h>
 #include "AbstractComponent.h"
 #include "AbstractHumidityComponent.h"
 #include "AbstractTemperatureComponent.h"

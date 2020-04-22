@@ -23,7 +23,7 @@ IRComponent::~IRComponent()
 void IRComponent::setup()
 {
 	// Start the ir receiver
-	irrecv.enableIRIn(true);
+	irrecv.enableIRIn(false);
 }
 
 void IRComponent::receive(String topic, String data, bool cont)
@@ -58,7 +58,6 @@ void IRComponent::loop()
 	if (irrecv.decode(&ircode))
 	{
 		this->receivedTime = millis();
-		decode_type_t decodeType = (decode_type_t)ircode.decode_type;
 		this->receivedCode = ircode.value;
 		this->receivedCommand = ircode.command;
 		this->receivedType = ircode.decode_type;
@@ -71,14 +70,8 @@ void IRComponent::loop()
 void IRComponent::reportStatus(JsonObject &jo)
 {
 	jo["ID"] = this->sensor_id;
-	String base = String("");
-	for (uint8_t i = 0; i < 16; i++)
-		base = base + String((uint8_t)this->receivedCode >> (i * 4) & 0xF, HEX);
-	jo["Received"] = String(this->receivedType, DEC) + ":" + String(this->receivedAddres, HEX) + ":" + String(this->receivedCommand, HEX) + String((uint32_t)(this->receivedCode & 0xFFFFFFFF), HEX) + ":" + String((uint32_t)(this->receivedCode << 32 & 0xFFFFFFFF), HEX) + ":" + this->receivedRepeat;
-	base = String("");
-	for (uint8_t i = 0; i < 16; i++)
-		base = base + String((uint8_t)this->sentCode >> (i * 4) & 0xF, HEX);
-	jo["Send"] = base;
+	jo["Received"] = typeToString(this->receivedType) + ":" + String(this->receivedAddres, HEX) + ":" + String(this->receivedCommand, HEX) + ":" + uint64ToString(this->receivedCode, HEX) + ":" + this->receivedRepeat;
+	jo["Send"] = uint64ToString(this->sentCode, HEX);
 }
 
 String IRComponent::moduleName()

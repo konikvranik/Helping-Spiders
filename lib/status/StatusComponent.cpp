@@ -145,6 +145,10 @@ void StatusComponent::jsonSuffix(JsonObject &p)
 	p["CPU freq"] = ESP.getCpuFreqMHz();
 	p["VCC"] = ESP.getVcc() / 1000.000;
 	p["Loops"] = lps < 0 ? "UNKNOWN" : String(lps);
+	JsonArray &files = p.createNestedArray("FS");
+	Dir dir = SPIFFS.openDir("/");
+	while (dir.next())
+		files.add(dir.fileName() + ":" + dir.fileSize());
 #ifdef DEVELOPMENT
 	p["development"] = true;
 #endif

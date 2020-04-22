@@ -33,8 +33,10 @@ void setupNTP()
 	NTP.onNTPSyncEvent([](NTPSyncEvent_t ntpEvent) {
 		if (ntpEvent)
 		{
-			if (ntpEvent == noResponse);
-			else if (ntpEvent == invalidAddress);
+			if (ntpEvent == noResponse)
+				;
+			else if (ntpEvent == invalidAddress)
+				;
 		}
 		else
 		{
@@ -99,3 +101,9 @@ void loop()
 	}
 	status_component.loop();
 }
+
+#ifdef ACTION_HANDLER
+#include ACTION_HANDLER
+#else
+void handle(AbstractComponent &component){};
+#endif
